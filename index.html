@@ -69,7 +69,18 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 #sb-overlay{display:none;position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.6);backdrop-filter:blur(2px)}
 #sb-overlay.open{display:block}
 /* QUOTE BAR */
-#quote-bar{position:fixed;left:var(--sb);right:0;top:0;height:var(--qb);background:rgba(10,10,22,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:stretch;z-index:98;overflow:hidden;transition:left .28s ease}
+#quote-bar{position:fixed;left:var(--sb);right:0;top:0;height:var(--qb);background:rgba(10,10,22,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;z-index:98;overflow:hidden;transition:left .28s ease}
+#qtape-track{flex:1;overflow:hidden;position:relative;height:100%;display:flex;align-items:center}
+.qtape-inner{display:flex;align-items:center;white-space:nowrap;animation:qtick 55s linear infinite;will-change:transform}
+.qtape-inner:hover{animation-play-state:paused}
+@keyframes qtick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.qt{display:inline-flex;align-items:center;gap:5px;padding:0 14px;border-right:1px solid rgba(255,255,255,.06);height:var(--qb);flex-shrink:0}
+.qt-lbl{font-size:7.5px;letter-spacing:.12em;color:var(--muted2);text-transform:uppercase}
+.qt-val{font-size:12.5px;font-weight:500;line-height:1}
+.qt-chg{font-size:9px}
+.qt-sep{width:1px;height:16px;background:rgba(255,255,255,.08);margin:0 2px}
+#qb-btn{flex-shrink:0;padding:0 12px;height:100%;border:none;background:none;color:var(--muted2);cursor:pointer;border-left:1px solid var(--border);font-size:14px;transition:color .15s}
+#qb-btn:hover{color:var(--lime)}
 .q-item{display:flex;align-items:center;gap:8px;padding:0 16px;border-right:1px solid var(--border);flex-shrink:0;min-width:110px}
 .q-col{display:flex;flex-direction:column;gap:1px}
 .q-label{font-size:8px;letter-spacing:.14em;color:var(--muted2);text-transform:uppercase}
@@ -373,7 +384,7 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
   #sidebar.mobile-open .nav-item span:not(.nav-icon){display:inline}
   #sidebar.mobile-open .logo-area{justify-content:flex-start;padding:24px 20px 16px}
   #hamburger{display:flex}
-  #quote-bar{left:0;overflow-x:auto;padding-left:52px}
+  #quote-bar{left:0;padding-left:52px}
   .page{padding:14px 12px}
   .kpi-grid{grid-template-columns:1fr 1fr}
   .idx-grid{grid-template-columns:1fr 1fr}
@@ -451,8 +462,6 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
   </div>
   <div class="sb-footer">
     <div class="sb-footer-row" id="sb-ver">VELA OPUS · v2r14</div>
-    <div class="sb-footer-row" id="sb-update">Atualização: —</div>
-    <div class="sb-footer-row" id="sb-ttl">Cache: 30 min</div>
     <div class="sb-footer-row" id="qb-snapshot" style="color:var(--sky);font-size:8.5px">📷 —</div>
     <div class="api-status-row">
       <div class="api-pill ok" id="ap-brapi"><div class="api-dot2"></div>Brapi</div>
@@ -463,15 +472,8 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
   </div>
 </nav>
 <div id="quote-bar">
-  <div class="q-item"><div class="q-col"><div class="q-label">USD/BRL <span id="ptax-badge" class="q-src">PTAX</span></div><div class="q-row"><span class="q-val" id="q-dolar">—</span><span id="q-dolar-chg" style="font-size:10px;margin-left:4px"></span><span class="edot es" id="q-dolar-dot"></span></div></div></div>
-  <div class="q-item"><div class="q-col"><div class="q-label">CDI <span class="q-cdi">12 meses</span></div><div class="q-row"><span class="q-val" id="q-cdi" style="color:var(--amber)">—%</span></div></div></div>
-  <div class="q-item"><div class="q-col"><div class="q-label">IPCA <span class="q-cdi">12 meses</span></div><div class="q-row"><span class="q-val" id="q-ipca" style="color:var(--orange)">—%</span></div></div></div>
-  <div class="q-item"><div class="q-col"><div class="q-label">Ibovespa</div><div class="q-row"><span class="q-val" id="q-ibov">—</span><span class="q-chg" id="q-ibov-c">—</span></div></div></div>
-  <div class="q-item"><div class="q-col"><div class="q-label">S&amp;P 500</div><div class="q-row"><span class="q-val" id="q-sp500">—</span><span class="q-chg" id="q-sp500-c">—</span></div></div></div>
-  <div class="q-item"><div class="q-col"><div class="q-label">NASDAQ</div><div class="q-row"><span class="q-val" id="q-nasdaq">—</span><span class="q-chg" id="q-nasdaq-c">—</span></div></div></div>
-  <div class="q-item"><div class="q-col"><div class="q-label">IFIX</div><div class="q-row"><span class="q-val" id="q-ifix">—</span><span class="q-chg" id="q-ifix-c">—</span></div></div></div>
-  <div class="q-item"><div class="q-col"><div class="q-label">Russell 2000</div><div class="q-row"><span class="q-val" id="q-rut">—</span><span class="q-chg" id="q-rut-c">—</span></div></div></div>
-  <div style="flex:1"></div>
+  <div id="qtape-track"><div class="qtape-inner" id="qtape"></div></div>
+  <button id="qb-btn" onclick="refreshAllQuotes()" title="Atualizar cotações">↻</button>
 </div>
 <div id="main">
 <!-- DASHBOARD -->
@@ -859,7 +861,6 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
             <div class="about-item"><span class="about-item-key">Release</span><span class="about-item-val" id="about-release">—</span></div>
           </div>
           <div class="about-card"><div class="about-card-title">Motor de Dados</div><div style="font-size:9px">
-            <div class="about-item"><span class="about-item-key">Última atualização</span><span class="about-item-val" id="about-snapshot">—</span></div>
             <div class="about-item"><span class="about-item-key">B3 — primária</span><span class="about-item-val">Brapi.dev</span></div>
             <div class="about-item"><span class="about-item-key">Taxas BR</span><span class="about-item-val">HG Finance · BCB</span></div>
             <div class="about-item"><span class="about-item-key">NYSE</span><span class="about-item-val">Finnhub · AV</span></div>
@@ -1434,7 +1435,6 @@ async function refreshAllQuotes(){
   }
 
   saveQ();updateUI();showToast('Cotações atualizadas ✓','s');
-  const sb=document.getElementById('sb-update');if(sb)sb.textContent='Atualização: '+new Date().toLocaleTimeString('pt-BR');
   setDataSnapshot();
 }
 
@@ -1627,7 +1627,7 @@ function renderDashboard(){
   if(cdiQ){const e=document.getElementById('q-cdi');if(e)e.textContent=cdiQ.price.toFixed(2)+'%'}
   if(ipcaQ){const e=document.getElementById('q-ipca');if(e)e.textContent=ipcaQ.price.toFixed(2)+'%'}
   const qi=(key,vid,cid)=>{const q=getIdx(key);if(!q)return;const ve=document.getElementById(vid);if(ve)ve.textContent=(+q.price).toLocaleString('pt-BR');const ce=document.getElementById(cid);if(ce){ce.textContent=(q.changePct>=0?'+':'')+Math.abs(+q.changePct).toFixed(2)+'%';ce.className='q-chg '+(q.changePct>=0?'up':'dn')}};
-  qi('IBOV','q-ibov','q-ibov-c');qi('SP500','q-sp500','q-sp500-c');qi('NASDAQ','q-nasdaq','q-nasdaq-c');qi('IFIX','q-ifix','q-ifix-c');qi('RUT','q-rut','q-rut-c');
+  // índices agora na faixa — updateQuoteTape()
   // Top posições
   const topEl=document.getElementById('dash-top-pos');
   const top=getPositions().filter(p=>p.qty>0).map(p=>({...p,val:priceBRL(p)*p.qty})).sort((a,b)=>b.val-a.val).slice(0,7);
@@ -3748,6 +3748,53 @@ function toggleSidebar(){const sb=document.getElementById('sidebar');const ov=do
 function closeSidebar(){document.getElementById('sidebar').classList.remove('mobile-open');document.getElementById('sb-overlay').classList.remove('open')}
 
 // ── MASTER UPDATE ────────────────────────────────────────────
+
+// ── FAIXA DESLIZANTE DE COTAÇÕES ─────────────────────────────────
+function buildTapeItems(){
+  const getIdx=k=>quotes['IDX_'+k];
+  const fmtChg=c=>{if(c==null||!isFinite(c))return'';const s=c>=0?'▲ +':'▼ ';return`<span class="qt-chg ${c>=0?'up':'dn'}">${s}${Math.abs(c).toFixed(2)}%</span>`};
+  const item=(lbl,val,chg='')=>`<div class="qt"><span class="qt-lbl">${lbl}</span><span class="qt-val">${val}</span>${fmtChg(chg)}</div>`;
+  const d=quotes['USD_BRL'];
+  const items=[
+    item('USD/BRL','R$ '+(d?.price||getDolar()).toFixed(4),d?.changePct),
+    item('CDI',getCDI().toFixed(2)+'%'),
+    item('IPCA',getIPCA().toFixed(2)+'%'),
+    item('Ibovespa',fNum(getIdx('IBOV')?.price||0,0),getIdx('IBOV')?.changePct),
+    item('IFIX',fNum(getIdx('IFIX')?.price||0,0),getIdx('IFIX')?.changePct),
+    item('S&P 500',fNum(getIdx('SP500')?.price||0,0),getIdx('SP500')?.changePct),
+    item('NASDAQ',fNum(getIdx('NASDAQ')?.price||0,0),getIdx('NASDAQ')?.changePct),
+    item('NASD-100',fNum(getIdx('NDX')?.price||0,0),getIdx('NDX')?.changePct),
+    item('Russell 2K',fNum(getIdx('RUT')?.price||0,0),getIdx('RUT')?.changePct),
+  ];
+  // Top movers da carteira
+  try{
+    const pos=getPositions().filter(p=>p.qty>0);
+    const mv=pos.map(p=>({t:p.ticker,c:getQ(p.ticker)?.changePct||0})).filter(p=>p.c!==0).sort((a,b)=>b.c-a.c);
+    mv.slice(0,2).filter(p=>p.c>0).forEach(p=>items.push(item('↑ '+p.t,'alta',p.c)));
+    [...mv].reverse().slice(0,2).filter(p=>p.c<0).forEach(p=>items.push(item('↓ '+p.t,'baixa',p.c)));
+    const tv=totalValue();
+    if(tv>0)items.push(item('Patrimônio','R$ '+fNum(tv)));
+  }catch(e){}
+  return items;
+}
+
+function updateQuoteTape(){
+  const el=document.getElementById('qtape');if(!el)return;
+  const items=buildTapeItems();
+  // Duplicar para loop contínuo sem salto
+  const html=items.concat(items).map(i=>i).join('');
+  el.innerHTML=html;
+  // Ajustar velocidade: ~80px/seg, medir largura real
+  const half=items.length;
+  el.style.animation='none';
+  requestAnimationFrame(()=>{
+    const totalW=el.scrollWidth/2;
+    const dur=Math.max(30,Math.round(totalW/80));
+    el.style.cssText=`display:flex;align-items:center;white-space:nowrap;animation:qtick ${dur}s linear infinite;will-change:transform`;
+  });
+}
+// ─────────────────────────────────────────────────────────────────
+
 function updateUI(){
   const cur=document.querySelector('.page.active')?.id?.replace('page-','');
   if(!cur)return;
