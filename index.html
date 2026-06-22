@@ -70,16 +70,16 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 #sb-overlay.open{display:block}
 /* QUOTE BAR */
 #quote-bar{position:fixed;left:var(--sb);right:0;top:0;height:var(--qb);background:rgba(10,10,22,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;z-index:98;overflow:hidden;transition:left .28s ease}
-#qtape-track{flex:1;overflow:hidden;position:relative;height:100%;display:flex;align-items:center}
-.qtape-inner{display:flex;align-items:center;white-space:nowrap;animation:qtick 55s linear infinite;will-change:transform}
-.qtape-inner:hover{animation-play-state:paused}
-@keyframes qtick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.qt{display:inline-flex;align-items:center;gap:5px;padding:0 14px;border-right:1px solid rgba(255,255,255,.06);height:var(--qb);flex-shrink:0}
+#qtape-track{flex:1;overflow:hidden;height:100%;position:relative}
+.qtape-inner{position:absolute;top:0;left:0;display:flex;align-items:center;height:100%;white-space:nowrap;animation:qtick 60s linear infinite;will-change:transform}
+.qtape-inner:hover,.qtape-inner:focus{animation-play-state:paused}
+@keyframes qtick{from{transform:translateX(0)}to{transform:translateX(-50%)}}100%{transform:translateX(-50%)}}
+.qt{display:inline-flex;flex-direction:column;justify-content:center;gap:2px;padding:0 14px;border-right:1px solid rgba(255,255,255,.07);height:100%;flex-shrink:0;min-width:80px}
 .qt-lbl{font-size:7.5px;letter-spacing:.12em;color:var(--muted2);text-transform:uppercase}
 .qt-val{font-size:12.5px;font-weight:500;line-height:1}
 .qt-chg{font-size:9px}
 .qt-sep{width:1px;height:16px;background:rgba(255,255,255,.08);margin:0 2px}
-#qb-btn{flex-shrink:0;padding:0 12px;height:100%;border:none;background:none;color:var(--muted2);cursor:pointer;border-left:1px solid var(--border);font-size:14px;transition:color .15s}
+#qb-btn{flex-shrink:0;width:40px;height:100%;border:none;background:rgba(255,255,255,.04);color:var(--lime);cursor:pointer;font-size:16px;border-left:1px solid var(--border);transition:all .15s}
 #qb-btn:hover{color:var(--lime)}
 .q-item{display:flex;align-items:center;gap:8px;padding:0 16px;border-right:1px solid var(--border);flex-shrink:0;min-width:110px}
 .q-col{display:flex;flex-direction:column;gap:1px}
@@ -1329,13 +1329,26 @@ async function refreshAllQuotes(){
 
   // ── Função de proteção contra preços absurdos ─────────────────
   function plausiblePrice(ticker,newPrice){
+    if(!newPrice||newPrice<=0)return false;
     const q=quotes[ticker];
-    if(!q||!q.price||q.price<=0)return newPrice>0;          // sem histórico: aceita qualquer positivo
-    if(!q.source||q.source==='avg'||q.source==='Manual')return newPrice>0; // fonte artificial: aceita API
-    const age=Date.now()-(q.ts||0);
-    if(age>86400000)return newPrice>0;                        // >24h: aceita atualização
-    const dev=Math.abs((newPrice-q.price)/q.price)*100;
-    return dev<=60;                                           // desvio >60%: suspeito, não sobrescreve
+    const asset=state.assets.find(a=>a.ticker===ticker);
+    const anchor=q?.price>0?q.price:asset?.avg; // usa avg como âncora se não tem cotação real
+    if(!anchor||anchor<=0)return true;           // sem qualquer referência: aceita
+    // Se âncora é avg ou cotação antiga (>24h): valida só contra avg com margem maior
+    const fromAvg=asset?.avg>0;
+    const age=Date.now()-(q?.ts||0);
+    if(!q?.price||q?.source==='avg'||age>86400000){
+      // Cotação nova vs preço médio de custo: aceita até 80% de desvio
+      const devAvg=fromAvg?Math.abs((newPrice-asset.avg)/asset.avg)*100:0;
+      return !fromAvg||devAvg<=80;
+    }
+    // Cotação nova vs última cotação real: aceita até 60% de desvio
+    const dev=Math.abs((newPrice-anchor)/anchor)*100;
+    if(dev>60){
+      console.warn(`[VELA] Preço suspeito ${ticker}: ${anchor}→${newPrice} (${dev.toFixed(1)}% desvio) — ignorado`);
+      return false;
+    }
+    return true;
   }
 
   // 3. B3: TODOS os tickers (não apenas expirados) — auto sempre substitui manual
@@ -1356,7 +1369,11 @@ async function refreshAllQuotes(){
         }
       }catch(e){}
     }
-    if(!quotes[tk])quotes[tk]=simQuote(tk);
+    // Fallback seguro: usar preço médio de custo (nunca simQuote que gera preço aleatório)
+    if(!quotes[tk]||!quotes[tk].price){
+      const asset=state.assets.find(a=>a.ticker===tk);
+      if(asset?.avg>0)quotes[tk]={price:asset.avg,changePct:0,source:'avg',ts:Date.now()-cfg.ttl-1};
+    }
   }
 
   // 4. NYSE: TODOS os tickers — Finnhub → AV → Yahoo
@@ -2632,8 +2649,10 @@ function openDetailPanel(ticker){
       <div class="detail-section-title">Informações</div>
       <div style="font-size:10px;color:var(--muted2);line-height:1.9">
         <div>Bolsa: <span style="color:var(--text)">${pos.exchange}</span></div>
-        <div>Tipo: <span style="color:var(--text)">${pos.type}</span></div>
-        <div>Setor: <span style="color:var(--text)">${pos.sector||'—'}</span></div>
+        <div>Tipo: <span style="color:${TYPE_COLOR[pos.type]||'var(--text)'}">${pos.type||'—'}</span></div>
+        <div>Custódia: <span style="color:var(--sky)">${pos.sector||'—'}</span></div>
+        <div>Classe: <span style="color:var(--emerald)">${pos.classe||pos.transactions?.[0]?.classe||'—'}</span></div>
+        <div>Segmento: <span style="color:var(--violet)">${pos.segmento||pos.transactions?.[0]?.segmento||'—'}</span></div>
         <div>1ª Compra: <span style="color:var(--text)">${pos.firstDate?new Date(pos.firstDate+'T12:00:00').toLocaleDateString('pt-BR'):'—'}</span></div>
         <div>Fonte: <span style="color:var(--text)">${q?.source||'—'}</span></div>
       </div>
@@ -3753,7 +3772,7 @@ function closeSidebar(){document.getElementById('sidebar').classList.remove('mob
 function buildTapeItems(){
   const getIdx=k=>quotes['IDX_'+k];
   const fmtChg=c=>{if(c==null||!isFinite(c))return'';const s=c>=0?'▲ +':'▼ ';return`<span class="qt-chg ${c>=0?'up':'dn'}">${s}${Math.abs(c).toFixed(2)}%</span>`};
-  const item=(lbl,val,chg='')=>`<div class="qt"><span class="qt-lbl">${lbl}</span><span class="qt-val">${val}</span>${fmtChg(chg)}</div>`;
+  const item=(lbl,val,chg='')=>`<div class="qt"><span class="qt-lbl">${lbl}</span><div style="display:flex;align-items:baseline;gap:4px"><span class="qt-val">${val}</span>${fmtChg(chg)}</div></div>`;
   const d=quotes['USD_BRL'];
   const items=[
     item('USD/BRL','R$ '+(d?.price||getDolar()).toFixed(4),d?.changePct),
@@ -3780,18 +3799,17 @@ function buildTapeItems(){
 
 function updateQuoteTape(){
   const el=document.getElementById('qtape');if(!el)return;
-  const items=buildTapeItems();
-  // Duplicar para loop contínuo sem salto
-  const html=items.concat(items).map(i=>i).join('');
-  el.innerHTML=html;
-  // Ajustar velocidade: ~80px/seg, medir largura real
-  const half=items.length;
-  el.style.animation='none';
-  requestAnimationFrame(()=>{
-    const totalW=el.scrollWidth/2;
-    const dur=Math.max(30,Math.round(totalW/80));
-    el.style.cssText=`display:flex;align-items:center;white-space:nowrap;animation:qtick ${dur}s linear infinite;will-change:transform`;
-  });
+  try{
+    const items=buildTapeItems();
+    if(!items.length)return;
+    el.innerHTML=[...items,...items].join('');
+    // Ajustar velocidade após render
+    requestAnimationFrame(()=>{
+      const hw=el.offsetWidth/2||el.scrollWidth/2;
+      const dur=Math.max(20,Math.round(hw/80));
+      el.style.animationDuration=dur+'s';
+    });
+  }catch(e){console.warn('tape:',e);}
 }
 // ─────────────────────────────────────────────────────────────────
 
@@ -3828,6 +3846,7 @@ function syncSettings(){
 // ── INIT ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
   load();loadTheme();syncSettings();setupAutoRefresh();loadDataSnapshot();loadTargets();
+  setTimeout(updateQuoteTape,200);
   document.querySelectorAll('.nav-item[data-page]').forEach(el=>el.addEventListener('click',()=>navigate(el.dataset.page)));
   // Subtitle dinâmico
   const ds=document.getElementById('dash-sub');
