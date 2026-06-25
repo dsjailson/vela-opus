@@ -398,34 +398,25 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
   .about-grid{grid-template-columns:1fr}
 }
 
-/* ── BÚSSOLA v2 · TABS ─── */
-.bs-tab-bar{display:flex;gap:2px;margin-bottom:20px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.bs-tab-bar{display:flex;gap:2px;margin-bottom:18px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
 .bs-tab-bar::-webkit-scrollbar{display:none}
-.bs-tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted2);cursor:pointer;font-family:'DM Mono',monospace;font-size:9.5px;padding:8px 16px;transition:all .15s;white-space:nowrap;flex-shrink:0;margin-bottom:-1px;letter-spacing:.04em}
+.bs-tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted2);cursor:pointer;font-family:'DM Mono',monospace;font-size:9.5px;padding:8px 14px;transition:all .15s;white-space:nowrap;flex-shrink:0;margin-bottom:-1px}
 .bs-tab:hover{color:var(--text)}
 .bs-tab.active{border-bottom-color:var(--lime);color:var(--lime);font-weight:600}
 .bs-pane{display:none}
 .bs-pane.active{display:block}
-/* ── CLAUDE IA PANEL ─── */
-.ai-result-section{border:1px solid rgba(255,255,255,.07);border-radius:10px;margin-bottom:12px;overflow:hidden}
-.ai-result-section-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg3);cursor:pointer;user-select:none}
-.ai-result-section-hdr:hover{background:rgba(255,255,255,.04)}
-.ai-result-section-body{padding:14px;font-size:10.5px;line-height:1.75;color:var(--text2)}
-.ai-result-section-body table{width:100%;border-collapse:collapse;margin:8px 0;font-size:10px}
-.ai-result-section-body th{text-align:left;padding:5px 8px;border-bottom:1px solid var(--border);font-size:8.5px;letter-spacing:.1em;color:var(--muted2);text-transform:uppercase}
-.ai-result-section-body td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
-.ai-result-section-body strong{color:var(--lime)}
-.ai-result-section-body em{color:var(--sky);font-style:normal}
-.ai-typing::after{content:'▋';animation:blink .7s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-/* ── SCORE RING ─── */
-.bs-ring-wrap{position:relative;width:90px;height:90px;flex-shrink:0}
-.bs-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-/* ── PERF CHART ─── */
-.bs-chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px}
-/* ── DESCOBERTAS ─── */
+.ia-sec{border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.ia-sec-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg3);cursor:pointer;user-select:none}
+.ia-sec-hdr:hover{background:rgba(255,255,255,.04)}
+.ia-sec-body{padding:14px;font-size:10.5px;line-height:1.75;color:var(--text2);white-space:pre-wrap;word-break:break-word}
+.ia-sec-body strong{color:var(--lime)}
+.ia-typing::after{content:'▋';animation:blink .7s step-start infinite}
+@keyframes blink{50%{opacity:0}}
 .desc-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .15s}
 .desc-card:hover{border-color:rgba(180,240,72,.2)}
+.bs-ring{position:relative;flex-shrink:0}
+.bs-ring svg{display:block}
+.bs-ring-lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 
 </style>
 </head>
@@ -674,14 +665,11 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
   </div>
 </div>
 <!-- BÚSSOLA · ALOCAÇÃO-ALVO -->
-<!-- BÚSSOLA · MÓDULO COMPLETO -->
 <div class="page" id="page-bussola">
   <div class="page-hdr">
-    <div><div class="page-title">Bú<em>ssola</em></div><div class="page-sub" id="bs-main-sub">Análise · IA · Ranking · Desempenho · Alocação · Descobertas</div></div>
-    <div class="hdr-actions"><span style="font-size:9px;color:var(--muted2);align-self:center" id="bs-target-sum">Soma dos alvos: —</span></div>
+    <div><div class="page-title">Bú<em>ssola</em></div><div class="page-sub">Análise · IA · Ranking · Desempenho · Alocação · Descobertas</div></div>
+    <div class="hdr-actions"><span style="font-size:9px;color:var(--muted2);align-self:center" id="bs-target-sum"></span></div>
   </div>
-
-  <!-- ABAS -->
   <div class="bs-tab-bar">
     <button class="bs-tab active" data-tab="analise" onclick="setBsTab('analise')">📊 Análise</button>
     <button class="bs-tab" data-tab="ia" onclick="setBsTab('ia')">🤖 Claude IA</button>
@@ -690,89 +678,72 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
     <button class="bs-tab" data-tab="alocacao" onclick="setBsTab('alocacao')">🎯 Alocação</button>
     <button class="bs-tab" data-tab="descobertas" onclick="setBsTab('descobertas')">☀️ Descobertas</button>
   </div>
-
-  <!-- ABA: ANÁLISE TÉCNICA QUANTITATIVA -->
   <div class="bs-pane active" id="bst-analise">
-    <div class="card mb-14" style="padding:14px 16px">
+    <div class="card mb-14" style="padding:12px 14px">
       <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
-        <div class="field" style="flex:1;min-width:180px;margin:0">
-          <label>Ativo da Carteira</label>
-          <select id="bs-ticker-sel" onchange="loadBsAnalise(this.value)">
-            <option value="">— selecione um ativo —</option>
-          </select>
-        </div>
+        <div class="field" style="flex:1;min-width:160px;margin:0"><label>Ativo da Carteira</label>
+          <select id="bs-ticker-sel" onchange="loadBsAnalise(this.value)"><option value="">— selecione —</option></select></div>
         <button class="btn btn-ghost btn-sm" onclick="loadBsAnalise(document.getElementById('bs-ticker-sel').value)">📊 Analisar</button>
       </div>
     </div>
-    <div id="bs-analise-area"><div style="color:var(--muted2);font-size:11px;padding:30px;text-align:center">Selecione um ativo acima para ver a análise técnica e quantitativa</div></div>
+    <div id="bs-analise-area" style="color:var(--muted2);font-size:11px;padding:24px;text-align:center">Selecione um ativo para ver a análise</div>
   </div>
-
-  <!-- ABA: CLAUDE IA -->
   <div class="bs-pane" id="bst-ia">
     <div class="card mb-14" style="border-color:rgba(167,139,250,.2)">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
         <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#a78bfa,#4dc8f8);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🤖</div>
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--violet)">Claude IA · Análise de Portfólio</div>
-          <div style="font-size:9px;color:var(--muted2)">Análise completa da sua carteira com dados reais em tempo real</div>
-        </div>
+        <div><div style="font-size:13px;font-weight:700;color:var(--violet)">Claude IA · Análise de Portfólio</div>
+          <div style="font-size:9px;color:var(--muted2)">Análise completa com dados reais da carteira</div></div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-sm" style="background:linear-gradient(135deg,rgba(167,139,250,.15),rgba(77,200,248,.15));border:1px solid rgba(167,139,250,.35);color:var(--violet)" onclick="runClaudeAnalysis('rapida')">⚡ Análise Rápida <span style="font-size:8px;color:var(--muted2)">~20s</span></button>
-        <button class="btn btn-sm" style="background:linear-gradient(135deg,rgba(180,240,72,.1),rgba(52,211,153,.1));border:1px solid rgba(180,240,72,.3);color:var(--lime)" onclick="runClaudeAnalysis('completa')">🔬 Análise Completa <span style="font-size:8px;color:var(--muted2)">~45s</span></button>
-        <button class="btn btn-sm" style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);color:var(--amber)" onclick="runClaudeAnalysis('risco')">🛡 Stress Test <span style="font-size:8px;color:var(--muted2)">risco</span></button>
+        <button class="btn btn-sm" style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:var(--violet)" onclick="runClaudeAnalysis('rapida')">⚡ Análise Rápida</button>
+        <button class="btn btn-sm" style="background:rgba(180,240,72,.08);border:1px solid rgba(180,240,72,.25);color:var(--lime)" onclick="runClaudeAnalysis('completa')">🔬 Análise Completa</button>
+        <button class="btn btn-sm" style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);color:var(--amber)" onclick="runClaudeAnalysis('risco')">🛡 Stress Test</button>
       </div>
-      <div id="ia-key-warn" style="margin-top:10px;font-size:8.5px;color:var(--amber);display:none">⚠ Configure sua chave Anthropic API em Ajustes → Chaves de API → Anthropic Key</div>
+      <div id="ia-key-warn" style="margin-top:8px;font-size:8.5px;color:var(--amber);display:none">⚠ Configure a chave Anthropic API em Ajustes → Chaves de API</div>
     </div>
-    <div id="ia-status" style="display:none;padding:16px;text-align:center;color:var(--muted2);font-size:11px"></div>
+    <div id="ia-status" style="display:none;padding:14px;text-align:center;color:var(--muted2);font-size:11px"></div>
     <div id="ia-result" style="display:none"></div>
-    <div id="ia-timestamp" style="font-size:8px;color:var(--muted);text-align:right;margin-top:8px;display:none"></div>
+    <div id="ia-timestamp" style="font-size:8px;color:var(--muted);text-align:right;margin-top:6px;display:none"></div>
+    <div id="ia-historico"></div>
   </div>
-
-  <!-- ABA: RANKING -->
   <div class="bs-pane" id="bst-ranking">
-    <div id="bs-ranking-area"><div style="color:var(--muted2);font-size:11px;padding:30px;text-align:center">Carregando ranking...</div></div>
+    <div id="bs-ranking-area" style="color:var(--muted2);font-size:11px;padding:24px;text-align:center">Carregando...</div>
   </div>
-
-  <!-- ABA: DESEMPENHO 12M -->
   <div class="bs-pane" id="bst-desempenho">
-    <div id="bs-desempenho-area"><div style="color:var(--muted2);font-size:11px;padding:30px;text-align:center">Carregando desempenho...</div></div>
+    <div id="bs-desempenho-area" style="color:var(--muted2);font-size:11px;padding:24px;text-align:center">Carregando...</div>
   </div>
-
-  <!-- ABA: ALOCAÇÃO (conteúdo existente) -->
   <div class="bs-pane" id="bst-alocacao">
     <div class="kpi-grid mb-20">
-      <div class="kpi"><div class="kpi-label">Patrimônio Total</div><div class="kpi-val" id="bs-total">R$ —</div></div>
-      <div class="kpi"><div class="kpi-label">Maior Desvio</div><div class="kpi-val" id="bs-maxdrift">—</div></div>
-      <div class="kpi"><div class="kpi-label">Categorias Subalocadas</div><div class="kpi-val" id="bs-under" style="color:var(--amber)">—</div></div>
-      <div class="kpi"><div class="kpi-label">Categorias Sobrealocadas</div><div class="kpi-val" id="bs-over" style="color:var(--sky)">—</div></div>
-    </div>
-    <div class="chart-box mb-20">
-      <div class="card-title-row">
-        <div class="card-title" style="margin:0">Alocação Atual vs Alvo</div>
-        <span style="font-size:9px;color:var(--muted2)">defina o alvo % de cada categoria</span>
-      </div>
-      <div id="bussola-table" style="margin-top:14px"></div>
-    </div>
-    <div class="card" style="border-color:rgba(180,240,72,.18)">
-      <div class="card-title-row">
-        <div class="card-title" style="margin:0;color:var(--lime)">💵 Simulador de Aporte</div>
-        <span style="font-size:9px;color:var(--muted2)">distribuição sugerida para reduzir o desvio</span>
-      </div>
-      <div style="display:flex;gap:10px;align-items:flex-end;margin-top:14px;flex-wrap:wrap">
-        <div class="field" style="flex:1;min-width:160px;margin:0"><label>Valor do Aporte (R$)</label><input type="number" id="bs-aporte" step="50" min="0" placeholder="ex: 2000"></div>
-        <button class="btn btn-lime" onclick="simulateAporte()">▶ Simular Distribuição</button>
-      </div>
-      <div id="bussola-aporte-result" style="margin-top:16px"></div>
-    </div>
+    <div class="kpi"><div class="kpi-label">Patrimônio Total</div><div class="kpi-val" id="bs-total">R$ —</div></div>
+    <div class="kpi"><div class="kpi-label">Maior Desvio</div><div class="kpi-val" id="bs-maxdrift">—</div></div>
+    <div class="kpi"><div class="kpi-label">Categorias Subalocadas</div><div class="kpi-val" id="bs-under" style="color:var(--amber)">—</div></div>
+    <div class="kpi"><div class="kpi-label">Categorias Sobrealocadas</div><div class="kpi-val" id="bs-over" style="color:var(--sky)">—</div></div>
   </div>
-
-  <!-- ABA: DESCOBERTAS -->
+  <div class="chart-box mb-20">
+    <div class="card-title-row">
+      <div class="card-title" style="margin:0">Alocação Atual vs Alvo</div>
+      <span style="font-size:9px;color:var(--muted2)">defina o alvo % de cada categoria</span>
+    </div>
+    <div id="bussola-table" style="margin-top:14px"></div>
+  </div>
+  <!-- SIMULADOR DE APORTE -->
+  <div class="card" style="border-color:rgba(180,240,72,.18)">
+    <div class="card-title-row">
+      <div class="card-title" style="margin:0;color:var(--lime)">💵 Simulador de Aporte</div>
+      <span style="font-size:9px;color:var(--muted2)">distribuição sugerida para reduzir o desvio</span>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-end;margin-top:14px;flex-wrap:wrap">
+      <div class="field" style="flex:1;min-width:160px;margin:0"><label>Valor do Aporte (R$)</label><input type="number" id="bs-aporte" step="50" min="0" placeholder="ex: 2000"></div>
+      <button class="btn btn-lime" onclick="simulateAporte()">▶ Simular Distribuição</button>
+    </div>
+    <div id="bussola-aporte-result" style="margin-top:16px"></div>
+  </div>
+  </div>
   <div class="bs-pane" id="bst-descobertas">
-    <div id="bs-descobertas-area"><div style="color:var(--muted2);font-size:11px;padding:30px;text-align:center">Carregando descobertas...</div></div>
+    <div id="bs-descobertas-area" style="color:var(--muted2);font-size:11px;padding:24px;text-align:center">Carregando...</div>
   </div>
 </div>
-
 <!-- GRÁFICOS -->
 <div class="page" id="page-charts">
   <div class="page-hdr"><div><div class="page-title">Gráficos de <em>Análise</em></div><div class="page-sub">Distribuição, desempenho e composição</div></div></div>
@@ -923,7 +894,7 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
       </div>
       <div class="card">
         <div class="card-title">Chaves de API</div>
-        <div class="field mb-14"><label>🤖 Anthropic API Key <span style="font-size:9px;color:var(--violet)">(Claude IA · Bússola)</span></label><input type="password" id="anthropic-key" placeholder="sk-ant-..." oninput="saveApiKeys()"></div>
+        <div class="field mb-14"><label>🤖 Anthropic API Key <span style="font-size:9px;color:var(--violet)">(Claude IA)</span></label><input type="password" id="anthropic-key" placeholder="sk-ant-api03-..." oninput="saveApiKeys()"></div>
         <div class="field mb-14"><label>Brapi.dev Token (opcional)</label><input type="password" id="brapi-key" placeholder="Token para limites maiores" oninput="saveApiKeys()"></div>
         <div class="field mb-14"><label>Alpha Vantage Key</label><input type="password" id="av-key" placeholder="Sua chave AV" oninput="saveApiKeys()"></div>
         <div class="field"><label>Finnhub Key</label><input type="password" id="fh-key" placeholder="Sua chave Finnhub" oninput="saveApiKeys()"></div>
@@ -1136,7 +1107,7 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
 <div id="toast"></div>
 <script>
 'use strict';
-const APP_VER={product:'VELA OPUS',version:2,release:15,build:'2026-06-23',file:'vela-opus-v2r15.html'};
+const APP_VER={product:'VELA OPUS',version:2,release:15,build:'2026-06-25',file:'vela-opus-v2r15.html'};
 const K={STATE:'vela_state_v2',QUOTES:'vela_quotes_v2',SNAPS:'vela_snaps_v2',CFG:'vela_cfg_v2',PROV:'vela_prov_v2',RF:'vela_rf_v2',SNAPSHOT:'vela_data_snapshot_v2'};
 let dataSnapshot=null; // {timestamp:ISOString, label:'DD/MM/AAAA HH:MM'}
 const TYPE_COLOR={'Ação':'#b4f048','FII':'#fbbf24','FI-INFRA':'#22d3ee','FIAGRO':'#4ade80','ETF':'#4dc8f8','BDR':'#a78bfa','REITs':'#fb923c','Cripto':'#f87171','Outro':'#94a3b8','CDB':'#2dd4bf','LCI':'#34d399','LCA':'#10b981','RDB':'#059669','Tesouro Selic':'#f59e0b','Tesouro IPCA+':'#fbbf24','Tesouro Prefixado':'#d97706','ETF RF':'#4dc8f8','Debenture':'#a78bfa'};
@@ -2373,519 +2344,413 @@ function deleteRF(id){const rf=rfAssets.find(r=>r.id===id);if(!rf||!confirm('Rem
 function rfOnIndexChange(){const idx=document.getElementById('rf-indexador')?.value;const lbl=document.getElementById('rf-taxa-label');if(!lbl)return;if(idx==='CDI')lbl.textContent='Taxa (% do CDI)';else if(idx==='IPCA+')lbl.textContent='Spread sobre IPCA (% a.a.)';else if(idx==='Prefixado')lbl.textContent='Taxa Prefixada (% a.a.)';else lbl.textContent='Taxa (% da Selic)'}
 
 
-// ══════════════════════════════════════════════════════════════════
-// BÚSSOLA v2 · MÓDULO EXPANDIDO
-// ══════════════════════════════════════════════════════════════════
-let bsTab='analise';
-let bsHistorico={};
-let bsSelectedTicker=null;
-let bsIaCache=null;
+// ════════════════════════════════════════════════════════════════
+// BÚSSOLA v2 · MÓDULO EXPANDIDO (r15)
+// ════════════════════════════════════════════════════════════════
+var bsTab='analise';
+var bsHistorico={};
+var bsSelectedTicker=null;
+var iaLog=[];
 
-// Catálogo de descobertas (ativos fora da carteira)
-const DESCOBERTAS_CAT=[
-  {t:'HGLG11',n:'CSHG Logística',type:'FII',seg:'Logística',ex:'B3',icon:'🏭'},
-  {t:'BTLG11',n:'BTG Logística',type:'FII',seg:'Logística',ex:'B3',icon:'🏭'},
-  {t:'MXRF11',n:'Maxi Renda',type:'FII',seg:'Papel/CRI',ex:'B3',icon:'📄'},
-  {t:'RBRF11',n:'RBR Alpha FoF',type:'FII',seg:'FoF',ex:'B3',icon:'🔀'},
-  {t:'HSML11',n:'HSI Mall',type:'FII',seg:'Shoppings',ex:'B3',icon:'🛍'},
-  {t:'INFR11',n:'Iridium Infra',type:'FI-INFRA',seg:'Debêntures',ex:'B3',icon:'🛤️'},
-  {t:'DEBB11',n:'Sparta Debêntures',type:'FI-INFRA',seg:'Debêntures',ex:'B3',icon:'🛤️'},
-  {t:'KDIF11',n:'Kinea Debêntures',type:'FI-INFRA',seg:'Debêntures',ex:'B3',icon:'🛤️'},
-  {t:'RURA11',n:'Itaú Rural FIAGRO',type:'FIAGRO',seg:'CRA Agro',ex:'B3',icon:'🌾'},
-  {t:'SOJA11',n:'Órama Soja FIAGRO',type:'FIAGRO',seg:'CRA Agro',ex:'B3',icon:'🌱'},
-  {t:'CRAA11',n:'Caixa Agro FIAGRO',type:'FIAGRO',seg:'CRA Agro',ex:'B3',icon:'🌾'},
-  {t:'IVVB11',n:'iShares S&P 500',type:'ETF',seg:'S&P 500',ex:'B3',icon:'📦'},
-  {t:'NASD11',n:'Invesco NASDAQ',type:'ETF',seg:'NASDAQ',ex:'B3',icon:'📦'},
-  {t:'BOVA11',n:'iShares Ibovespa',type:'ETF',seg:'Ibovespa',ex:'B3',icon:'📦'},
-  {t:'VNQ',n:'Vanguard Real Estate',type:'ETF',seg:'REITs US',ex:'NYSE',icon:'🏙️'},
-  {t:'SCHD',n:'Schwab Dividend',type:'ETF',seg:'Dividendos US',ex:'NYSE',icon:'💵'},
-  {t:'IEF',n:'iShares 7-10yr Tsy',type:'ETF',seg:'Bonds US',ex:'NYSE',icon:'🏦'},
+var DESCOBERTAS_CAT=[
+  {t:'HGLG11',n:'CSHG Logística FII',type:'FII',seg:'Logística',ex:'B3'},
+  {t:'BTLG11',n:'BTG Logística FII',type:'FII',seg:'Logística',ex:'B3'},
+  {t:'MXRF11',n:'Maxi Renda FII',type:'FII',seg:'Papel/CRI',ex:'B3'},
+  {t:'RBRF11',n:'RBR Alpha FoF',type:'FII',seg:'FoF',ex:'B3'},
+  {t:'INFR11',n:'Iridium Infra FI-INFRA',type:'FI-INFRA',seg:'Debêntures',ex:'B3'},
+  {t:'KDIF11',n:'Kinea Debêntures FI-INFRA',type:'FI-INFRA',seg:'Debêntures',ex:'B3'},
+  {t:'DEBB11',n:'Sparta Debêntures',type:'FI-INFRA',seg:'Debêntures',ex:'B3'},
+  {t:'RURA11',n:'Itaú Rural FIAGRO',type:'FIAGRO',seg:'CRA Agro',ex:'B3'},
+  {t:'SOJA11',n:'Órama Soja FIAGRO',type:'FIAGRO',seg:'CRA Agro',ex:'B3'},
+  {t:'IVVB11',n:'iShares S&P 500 ETF',type:'ETF',seg:'S&P 500',ex:'B3'},
+  {t:'NASD11',n:'Invesco NASDAQ ETF',type:'ETF',seg:'NASDAQ',ex:'B3'},
+  {t:'BOVA11',n:'iShares Ibovespa ETF',type:'ETF',seg:'Ibovespa',ex:'B3'},
+  {t:'VNQ',n:'Vanguard Real Estate',type:'ETF',seg:'REITs US',ex:'NYSE'},
+  {t:'SCHD',n:'Schwab Dividend Equity',type:'ETF',seg:'Dividendos US',ex:'NYSE'},
+  {t:'IEF',n:'iShares 7-10yr Treasury',type:'ETF',seg:'Bonds US',ex:'NYSE'},
 ];
 
-// ── TAB SWITCHING ──────────────────────────────────────────────
+// ── IA LOG ────────────────────────────────────────────────────
+function loadIaLog(){
+  try{iaLog=JSON.parse(localStorage.getItem('vela_ia_log_v2'))||[];}
+  catch(e){iaLog=[];}
+}
+function saveIaLog(){
+  try{localStorage.setItem('vela_ia_log_v2',JSON.stringify(iaLog.slice(0,5)));}catch(e){}
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────
 function setBsTab(tab){
   bsTab=tab;
-  document.querySelectorAll('.bs-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  document.querySelectorAll('.bs-pane').forEach(p=>p.classList.toggle('active',p.id==='bst-'+tab));
-  if(tab==='analise')renderBsAnalise();
-  else if(tab==='ia')renderBsIaPanel();
-  else if(tab==='ranking')renderBsRanking();
-  else if(tab==='desempenho')renderBsDesempenho();
-  else if(tab==='alocacao')renderBussola();
-  else if(tab==='descobertas')renderBsDescovertas();
+  document.querySelectorAll('.bs-tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===tab);});
+  document.querySelectorAll('.bs-pane').forEach(function(p){p.classList.toggle('active',p.id==='bst-'+tab);});
+  if(tab==='analise'){renderBsAnalise();}
+  else if(tab==='ia'){renderBsIaPanel();}
+  else if(tab==='ranking'){renderBsRanking();}
+  else if(tab==='desempenho'){renderBsDesempenho();}
+  else if(tab==='alocacao'){renderBussola();}
+  else if(tab==='descobertas'){renderBsDescovertas();}
 }
 
-// ── SCORE QUANTITATIVO ─────────────────────────────────────────
+// ── SCORE QUANTITATIVO ────────────────────────────────────────
 function calcCompositeScore(pos){
-  if(!pos||pos.qty<=0)return{score:0,label:'N/D',color:'#475569',breakdown:{}};
-  const r=calcResult(pos);
-  const cdi=getCDI();
-  const invested=pos.exchange==='NYSE'?pos.avg*getDolar()*pos.qty:pos.avg*pos.qty;
-  // Momentum: P&L vs CDI
-  const excess=(r.pct||0)-cdi;
-  const momentumScore=Math.max(0,Math.min(100,50+excess*1.8));
-  // DY
-  const totalProv=proventos.filter(p=>p.ticker===pos.ticker).reduce((s,p)=>s+((p.value||p.amount||0)*(p.qty||1)),0);
-  const dy=invested>0?(totalProv/invested)*100:0;
-  const dyScore=Math.max(0,Math.min(100,dy>0?Math.min(100,(dy/Math.max(cdi,1))*100):30));
-  // Tendência preço vs custo médio
-  const price=priceBRL(pos);
-  const trendPct=pos.avg>0?(price-pos.avg)/pos.avg*100:0;
-  const trendScore=Math.max(0,Math.min(100,50+trendPct*1.5));
-  // Aderência à meta Bússola
-  const tv=totalValue();
-  const catPct=tv>0?price*pos.qty/tv*100:0;
-  const cat=bussolaCategoryOf(pos);
-  const target=bsTargets[cat]||0;
-  const allocScore=target>0?Math.max(0,100-Math.abs(catPct-target)*6):50;
-  const score=Math.round(momentumScore*0.35+dyScore*0.25+trendScore*0.25+allocScore*0.15);
-  const label=score>=75?'FORTE COMPRA':score>=60?'COMPRA':score>=42?'NEUTRO':score>=28?'ATENÇÃO':'REVISAR';
-  const color=score>=75?'#22c55e':score>=60?'#86efac':score>=42?'#fbbf24':score>=28?'#fb923c':'#f87171';
-  return{score,label,color,breakdown:{momentumScore,dyScore,trendScore,allocScore,dy,pct:r.pct||0,trendPct,result:r.result||0}};
+  if(!pos||pos.qty<=0)return{score:0,label:'N/D',color:'#475569',bd:{}};
+  var r=calcResult(pos);
+  var cdi=getCDI();
+  var invested=pos.exchange==='NYSE'?pos.avg*getDolar()*pos.qty:pos.avg*pos.qty;
+  var excess=(r.pct||0)-cdi;
+  var mScore=Math.max(0,Math.min(100,50+excess*1.8));
+  var totalProv=proventos.filter(function(p){return p.ticker===pos.ticker;}).reduce(function(s,p){return s+((p.value||p.amount||0)*(p.qty||1));},0);
+  var dy=invested>0?(totalProv/invested)*100:0;
+  var dScore=Math.max(0,Math.min(100,dy>0?Math.min(100,(dy/Math.max(cdi,1))*100):30));
+  var price=priceBRL(pos);
+  var trendPct=pos.avg>0?(price-pos.avg)/pos.avg*100:0;
+  var tScore=Math.max(0,Math.min(100,50+trendPct*1.5));
+  var tv=totalValue();
+  var catPct=tv>0?price*pos.qty/tv*100:0;
+  var cat=bussolaCategoryOf(pos);
+  var target=bsTargets[cat]||0;
+  var aScore=target>0?Math.max(0,100-Math.abs(catPct-target)*6):50;
+  var score=Math.round(mScore*0.35+dScore*0.25+tScore*0.25+aScore*0.15);
+  var label=score>=75?'FORTE COMPRA':score>=60?'COMPRA':score>=42?'NEUTRO':score>=28?'ATENÇÃO':'REVISAR';
+  var color=score>=75?'#22c55e':score>=60?'#86efac':score>=42?'#fbbf24':score>=28?'#fb923c':'#f87171';
+  return{score:score,label:label,color:color,bd:{mScore:mScore,dScore:dScore,tScore:tScore,aScore:aScore,dy:dy,pct:r.pct||0,trendPct:trendPct,result:r.result||0}};
 }
 
-function bsScoreRing(score,color,size=90){
-  const r=(size-12)/2;const c=2*Math.PI*r;const off=c*(1-score/100);
-  return`<svg width="${size}" height="${size}" style="transform:rotate(-90deg)">
-    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#1e293b" stroke-width="10"/>
-    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="10"
-      stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" stroke-linecap="round"/>
-  </svg>`;
+function bsRing(score,color,sz){
+  sz=sz||90;
+  var r=(sz-12)/2;
+  var c=2*Math.PI*r;
+  var off=c*(1-score/100);
+  return '<svg width="'+sz+'" height="'+sz+'" style="display:block;transform:rotate(-90deg)"><circle cx="'+sz/2+'" cy="'+sz/2+'" r="'+r+'" fill="none" stroke="#1e293b" stroke-width="10"/><circle cx="'+sz/2+'" cy="'+sz/2+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="10" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" stroke-linecap="round"/></svg>';
 }
 
-// ── ANÁLISE TÉCNICA ─────────────────────────────────────────────
+// ── ABA ANÁLISE ───────────────────────────────────────────────
 function renderBsAnalise(){
-  const sel=document.getElementById('bs-ticker-sel');
-  if(sel){
-    const positions=getPositions().filter(p=>p.qty>0);
-    const prev=sel.value||bsSelectedTicker;
-    sel.innerHTML='<option value="">— selecione um ativo —</option>'+positions.map(p=>`<option value="${p.ticker}">${p.ticker} · ${p.type}</option>`).join('');
-    if(prev)sel.value=prev;
-    if(!bsSelectedTicker&&positions.length)bsSelectedTicker=positions[0].ticker;
-    if(bsSelectedTicker){sel.value=bsSelectedTicker;loadBsAnalise(bsSelectedTicker);}
-  }
+  var sel=document.getElementById('bs-ticker-sel');
+  if(!sel)return;
+  var positions=getPositions().filter(function(p){return p.qty>0;});
+  var prev=bsSelectedTicker||sel.value;
+  sel.innerHTML='<option value="">— selecione —</option>'+positions.map(function(p){return '<option value="'+p.ticker+'">'+p.ticker+' · '+p.type+'</option>';}).join('');
+  if(prev){sel.value=prev;}
+  if(!bsSelectedTicker&&positions.length){bsSelectedTicker=positions[0].ticker;sel.value=bsSelectedTicker;}
+  if(bsSelectedTicker)loadBsAnalise(bsSelectedTicker);
 }
 
 function loadBsAnalise(ticker){
   if(!ticker)return;
   bsSelectedTicker=ticker;
-  const pos=getPositions().find(p=>p.ticker===ticker);
-  const area=document.getElementById('bs-analise-area');
+  var pos=getPositions().find(function(p){return p.ticker===ticker;});
+  var area=document.getElementById('bs-analise-area');
   if(!area)return;
   if(!pos){area.innerHTML='<div style="color:var(--muted2);padding:20px">Ativo não encontrado</div>';return;}
-  const sc=calcCompositeScore(pos);
-  const q=getQ(ticker);
-  const r=calcResult(pos);
-  const tc=TYPE_COLOR[pos.type]||'#94a3b8';
-  const tvSym=pos.exchange==='B3'?`B3:${ticker}`:ticker;
-  const invested=pos.exchange==='NYSE'?pos.avg*getDolar()*pos.qty:pos.avg*pos.qty;
-  area.innerHTML=`
-    <div class="grid-2 mb-16">
-      <div class="card" style="border-color:${sc.color}28">
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
-          <div class="bs-ring-wrap">
-            ${bsScoreRing(sc.score,sc.color)}
-            <div class="bs-ring-inner">
-              <div style="font-size:24px;font-weight:700;color:${sc.color};font-family:'Syne',sans-serif;line-height:1">${sc.score}</div>
-              <div style="font-size:7.5px;color:var(--muted2)">/100</div>
-            </div>
-          </div>
-          <div style="flex:1">
-            <div style="font-size:16px;font-weight:700;color:${tc}">${ticker}</div>
-            <div style="display:flex;gap:4px;margin:5px 0">
-              <span style="font-size:8px;padding:2px 7px;border-radius:4px;background:${tc}14;color:${tc}">${pos.type}</span>
-              <span style="font-size:8px;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--muted2)">${pos.exchange}</span>
-              ${pos.sector?`<span style="font-size:8px;padding:2px 7px;border-radius:4px;background:rgba(77,200,248,.08);color:var(--sky)">${pos.sector}</span>`:''}
-            </div>
-            <span style="font-size:10px;padding:4px 14px;border-radius:12px;font-weight:700;background:${sc.color}14;color:${sc.color};border:1px solid ${sc.color}30">${sc.label}</span>
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px">
-          ${[['📈 Momentum vs CDI',sc.breakdown.momentumScore,'var(--lime)'],
-             ['💰 Dividendos / DY',sc.breakdown.dyScore,'var(--amber)'],
-             ['📊 Tendência de Preço',sc.breakdown.trendScore,'var(--sky)'],
-             ['🎯 Meta Bússola',sc.breakdown.allocScore,'var(--violet)']].map(([lbl,val,col])=>`
-            <div>
-              <div style="display:flex;justify-content:space-between;font-size:8.5px;margin-bottom:3px">
-                <span style="color:var(--muted2)">${lbl}</span><span style="color:${col};font-weight:600">${Math.round(val)}</span>
-              </div>
-              <div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden">
-                <div style="width:${Math.min(100,val)}%;height:100%;background:${col};border-radius:3px"></div>
-              </div>
-            </div>`).join('')}
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-          ${[['P&L Total',(r.pct>=0?'+':'-')+Math.abs(r.pct||0).toFixed(1)+'%',r.pct>=0?'var(--emerald)':'var(--rose)'],
-             ['DY estimado',sc.breakdown.dy>0?sc.breakdown.dy.toFixed(1)+'%':'—','var(--amber)'],
-             ['Tendência',sc.breakdown.trendPct>=0?'▲ Alta':'▼ Baixa',sc.breakdown.trendPct>=0?'var(--lime)':'var(--rose)']].map(([l,v,c])=>`
-            <div style="background:var(--bg3);border-radius:8px;padding:8px;text-align:center">
-              <div style="font-size:8px;color:var(--muted2)">${l}</div>
-              <div style="font-size:12px;font-weight:700;color:${c};margin-top:2px">${v}</div>
-            </div>`).join('')}
-        </div>
-      </div>
-      <div class="card" style="padding:10px">
-        <div style="font-size:8.5px;color:var(--muted2);margin-bottom:8px;display:flex;justify-content:space-between">
-          <span>📊 Gráfico de Preço · ${ticker}</span>
-          <span style="color:var(--sky)">TradingView</span>
-        </div>
-        <div id="bs-tv-wrap" style="height:330px;border-radius:8px;overflow:hidden;background:var(--bg3)"></div>
-      </div>
-    </div>
-    <div class="card mb-16">
-      <div class="card-title">⚡ Indicadores Quantitativos</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:9px">
-        ${[['💹 Cotação',q?'R$ '+q.price.toFixed(2):'—','var(--text)'],
-           ['📌 P. Médio','R$ '+pos.avg.toFixed(2),'var(--muted2)'],
-           ['⚡ Var. Dia',q?(q.changePct>=0?'+':'-')+Math.abs(q.changePct||0).toFixed(2)+'%':'—',q&&q.changePct>=0?'var(--emerald)':'var(--rose)'],
-           ['💰 Resultado',(r.result>=0?'+':'-')+'R$ '+fNum(Math.abs(r.result||0)),r.result>=0?'var(--lime)':'var(--rose)'],
-           ['📦 Quantidade',fNum(pos.qty,0),'var(--text)'],
-           ['💵 Investido','R$ '+fNum(invested),'var(--sky)'],
-           ['⚖ Peso Cart.',totalValue()>0?(priceBRL(pos)*pos.qty/totalValue()*100).toFixed(1)+'%':'—','var(--violet)'],
-           ['🏷 Segmento',pos.segmento||pos.transactions?.[0]?.segmento||'—','var(--muted2)']].map(([i,v,c])=>`
-          <div style="background:var(--bg3);border-radius:8px;padding:9px;text-align:center">
-            <div style="font-size:11px;margin-bottom:3px">${i.split(' ')[0]}</div>
-            <div style="font-size:8.5px;color:var(--muted2);margin-bottom:3px">${i.split(' ').slice(1).join(' ')}</div>
-            <div style="font-size:11px;font-weight:600;color:${c}">${v}</div>
-          </div>`).join('')}
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title-row">
-        <div class="card-title" style="margin:0">📈 Desempenho 12 meses · ${ticker} vs CDI</div>
-        <button class="btn btn-ghost btn-sm" onclick="loadBsHistChart('${ticker}','${pos.exchange}')">↻ Carregar</button>
-      </div>
-      <canvas id="bs-hist-canvas" style="width:100%;height:150px;display:block;margin-top:10px"></canvas>
-      <div id="bs-hist-meta" style="font-size:8.5px;color:var(--muted2);margin-top:6px;text-align:center">Clique em ↻ Carregar para buscar histórico via Brapi</div>
-    </div>`;
+  var sc=calcCompositeScore(pos);
+  var q=getQ(ticker);
+  var r=calcResult(pos);
+  var tc=TYPE_COLOR[pos.type]||'#94a3b8';
+  var invested=pos.exchange==='NYSE'?pos.avg*getDolar()*pos.qty:pos.avg*pos.qty;
+  var tvSym=pos.exchange==='B3'?'BMFBOVESPA:'+ticker:(ticker.includes(':')?ticker:'NASDAQ:'+ticker);
+  var indBars=[
+    ['📈 Momentum vs CDI',sc.bd.mScore,'var(--lime)'],
+    ['💰 Dividendos / DY',sc.bd.dScore,'var(--amber)'],
+    ['📊 Tendência de Preço',sc.bd.tScore,'var(--sky)'],
+    ['🎯 Meta Bússola',sc.bd.aScore,'var(--violet)']
+  ].map(function(x){
+    return '<div><div style="display:flex;justify-content:space-between;font-size:8.5px;margin-bottom:3px"><span style="color:var(--muted2)">'+x[0]+'</span><span style="color:'+x[2]+';font-weight:600">'+Math.round(x[1])+'</span></div><div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden"><div style="width:'+Math.min(100,x[1])+'%;height:100%;background:'+x[2]+';border-radius:3px"></div></div></div>';
+  }).join('');
+  var statsGrid=[
+    ['Cotação',q?'R$ '+q.price.toFixed(2):'—','var(--text)'],
+    ['P. Médio','R$ '+pos.avg.toFixed(2),'var(--muted2)'],
+    ['Var. Dia',q?(q.changePct>=0?'+':'-')+Math.abs(q.changePct||0).toFixed(2)+'%':'—',q&&q.changePct>=0?'var(--emerald)':'var(--rose)'],
+    ['Resultado',(r.result>=0?'+':'-')+'R$ '+fNum(Math.abs(r.result||0)),r.result>=0?'var(--lime)':'var(--rose)'],
+    ['DY est.',sc.bd.dy>0?sc.bd.dy.toFixed(1)+'%':'—','var(--amber)'],
+    ['P&L%',(sc.bd.pct>=0?'+':'-')+Math.abs(sc.bd.pct||0).toFixed(1)+'%',sc.bd.pct>=0?'var(--emerald)':'var(--rose)']
+  ].map(function(x){
+    return '<div style="background:var(--bg3);border-radius:8px;padding:8px;text-align:center"><div style="font-size:8px;color:var(--muted2)">'+x[0]+'</div><div style="font-size:11px;font-weight:600;color:'+x[2]+';margin-top:2px">'+x[1]+'</div></div>';
+  }).join('');
+  area.innerHTML='<div class="grid-2 mb-16">'
+    +'<div class="card" style="border-color:'+sc.color+'28">'
+      +'<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">'
+        +'<div class="bs-ring">'+bsRing(sc.score,sc.color)+'<div class="bs-ring-lbl"><div style="font-size:22px;font-weight:700;color:'+sc.color+';font-family:system-ui;line-height:1">'+sc.score+'</div><div style="font-size:7.5px;color:var(--muted2)">/100</div></div></div>'
+        +'<div><div style="font-size:15px;font-weight:700;color:'+tc+'">'+ticker+'</div>'
+        +'<div style="display:flex;gap:4px;margin:5px 0"><span style="font-size:8px;padding:2px 7px;border-radius:4px;background:'+tc+'14;color:'+tc+'">'+pos.type+'</span><span style="font-size:8px;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--muted2)">'+pos.exchange+'</span></div>'
+        +'<span style="font-size:10px;padding:4px 14px;border-radius:12px;font-weight:700;background:'+sc.color+'14;color:'+sc.color+';border:1px solid '+sc.color+'30">'+sc.label+'</span>'
+        +'</div></div>'
+      +'<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px">'+indBars+'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'+statsGrid+'</div>'
+    +'</div>'
+    +'<div class="card" style="padding:10px"><div style="font-size:8.5px;color:var(--muted2);margin-bottom:8px;display:flex;justify-content:space-between"><span>📊 Gráfico · '+ticker+'</span><span style="color:var(--sky)">TradingView</span></div><div id="bs-tv-wrap" style="height:320px;border-radius:8px;overflow:hidden;background:var(--bg3)"></div></div>'
+  +'</div>'
+  +'<div class="card">'
+    +'<div class="card-title-row"><div class="card-title" style="margin:0">📈 Desempenho 12m · '+ticker+' vs CDI</div>'
+    +'<button class="btn btn-ghost btn-sm" onclick="loadBsHistChart(\''+ticker+'\',\''+pos.exchange+'\')">↻ Carregar</button></div>'
+    +'<canvas id="bs-hist-canvas" style="width:100%;height:140px;display:block;margin-top:10px"></canvas>'
+    +'<div id="bs-hist-meta" style="font-size:8.5px;color:var(--muted2);margin-top:6px;text-align:center">Clique em ↻ para buscar histórico via Brapi</div>'
+  +'</div>';
   loadTVChart('bs-tv-wrap',tvSym);
 }
 
 function loadTVChart(id,sym){
-  const el=document.getElementById(id);if(!el)return;
-  el.innerHTML=`<iframe src="https://s.tradingview.com/widgetembed/?symbol=${encodeURIComponent(sym)}&interval=D&theme=dark&style=1&locale=br&hide_side_toolbar=1&allow_symbol_change=0&details=0&hotlist=0&calendar=0&hideideas=1&save_image=0" style="width:100%;height:100%;border:none" allowtransparency="true" scrolling="no" frameborder="0" loading="lazy"></iframe>`;
+  var el=document.getElementById(id);if(!el)return;
+  el.innerHTML='<iframe src="https://s.tradingview.com/widgetembed/?symbol='+encodeURIComponent(sym)+'&interval=D&theme=dark&style=1&locale=br&hide_side_toolbar=1&allow_symbol_change=0&details=0&hotlist=0&calendar=0&hideideas=1&save_image=0" style="width:100%;height:100%;border:none;border-radius:8px" frameborder="0" loading="lazy"></iframe>';
 }
 
 async function fetchBrapiHistorico(ticker){
   if(bsHistorico[ticker])return bsHistorico[ticker];
-  const token=cfg.brapiKey?`&token=${cfg.brapiKey}`:'';
-  try{
-    const r=await fetch(`https://brapi.dev/api/quote/${ticker}?range=1y&interval=1mo${token}`,{signal:AbortSignal.timeout(10000)});
-    const j=await r.json();
-    const data=j?.results?.[0]?.historicalDataPrice;
-    if(data?.length){bsHistorico[ticker]=data;return data;}
-  }catch(e){}
+  var token=cfg.brapiKey?'?token='+cfg.brapiKey:'';
+  var sep=token?'&':'?';
+  var urls=[
+    'https://brapi.dev/api/quote/'+ticker+token+sep+'range=1y&interval=1mo',
+    'https://brapi.dev/api/quote/'+ticker+token+sep+'range=1y&interval=1wk',
+  ];
+  for(var i=0;i<urls.length;i++){
+    try{
+      var resp=await fetch(urls[i],{signal:AbortSignal.timeout(12000)});
+      if(!resp.ok)continue;
+      var j=await resp.json();
+      var data=(j&&j.results&&j.results[0]&&j.results[0].historicalDataPrice)||null;
+      if(data&&data.length>=4){
+        var norm=data.map(function(d){return{close:d.close||d.adjustedClose||d.price||0,date:d.date};}).filter(function(d){return d.close>0;});
+        if(norm.length>=4){bsHistorico[ticker]=norm;return norm;}
+      }
+    }catch(e){}
+  }
   return null;
 }
 
 function drawPerfChart(canvas,data,color,cdiAnnual){
   if(!canvas||!data||data.length<2)return;
-  const W=canvas.offsetWidth||canvas.parentElement?.offsetWidth||300;
-  const H=canvas.offsetHeight||150;
+  var W=Math.max(200,canvas.offsetWidth||300);
+  var H=Math.max(80,canvas.offsetHeight||140);
   canvas.width=W;canvas.height=H;
-  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);
-  const prices=data.map(d=>d.close||d.adjClose||d.regularMarketPrice).filter(Boolean);
+  var ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);
+  var prices=data.map(function(d){return d.close||0;}).filter(function(p){return p>0;});
   if(prices.length<2)return;
-  const base=prices[0];
-  const aRet=prices.map(p=>(p-base)/base*100);
-  const cdiM=Math.pow(1+cdiAnnual/100,1/12)-1;
-  const cRet=aRet.map((_,i)=>(Math.pow(1+cdiM,i+1)-1)*100);
-  const all=[...aRet,...cRet];
-  const minV=Math.min(...all)-1,maxV=Math.max(...all)+1,range=maxV-minV||1;
-  const xOf=i=>10+(i/(prices.length-1))*(W-20);
-  const yOf=v=>H-6-((v-minV)/range*(H-12));
-  // Zero
-  ctx.strokeStyle='rgba(255,255,255,.07)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(0,yOf(0));ctx.lineTo(W,yOf(0));ctx.stroke();
-  // CDI
+  var base=prices[0];
+  var aRet=prices.map(function(p){return(p-base)/base*100;});
+  var cdiM=Math.pow(1+cdiAnnual/100,1/12)-1;
+  var cRet=aRet.map(function(_,i){return(Math.pow(1+cdiM,i+1)-1)*100;});
+  var all=aRet.concat(cRet);
+  var minV=Math.min.apply(null,all)-1;var maxV=Math.max.apply(null,all)+1;var range=maxV-minV||1;
+  var xOf=function(i){return 10+(i/(prices.length-1))*(W-20);};
+  var yOf=function(v){return H-6-((v-minV)/range*(H-12));};
+  ctx.strokeStyle='rgba(255,255,255,.07)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,yOf(0));ctx.lineTo(W,yOf(0));ctx.stroke();
   ctx.strokeStyle='rgba(251,191,36,.5)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
-  ctx.beginPath();cRet.forEach((v,i)=>i===0?ctx.moveTo(xOf(i),yOf(v)):ctx.lineTo(xOf(i),yOf(v)));ctx.stroke();
-  ctx.setLineDash([]);
-  // Fill
+  ctx.beginPath();cRet.forEach(function(v,i){if(i===0)ctx.moveTo(xOf(i),yOf(v));else ctx.lineTo(xOf(i),yOf(v));});ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle=color+'1a';ctx.beginPath();
-  aRet.forEach((v,i)=>i===0?ctx.moveTo(xOf(i),yOf(v)):ctx.lineTo(xOf(i),yOf(v)));
+  aRet.forEach(function(v,i){if(i===0)ctx.moveTo(xOf(i),yOf(v));else ctx.lineTo(xOf(i),yOf(v));});
   ctx.lineTo(xOf(aRet.length-1),yOf(0));ctx.lineTo(xOf(0),yOf(0));ctx.closePath();ctx.fill();
-  // Line
   ctx.strokeStyle=color;ctx.lineWidth=2.5;
-  ctx.beginPath();aRet.forEach((v,i)=>i===0?ctx.moveTo(xOf(i),yOf(v)):ctx.lineTo(xOf(i),yOf(v)));ctx.stroke();
-  // Labels
-  const lA=aRet[aRet.length-1],lC=cRet[cRet.length-1];
+  ctx.beginPath();aRet.forEach(function(v,i){if(i===0)ctx.moveTo(xOf(i),yOf(v));else ctx.lineTo(xOf(i),yOf(v));});ctx.stroke();
+  var lA=aRet[aRet.length-1];var lC=cRet[cRet.length-1];
   ctx.font='bold 9px monospace';
-  ctx.fillStyle=color;ctx.fillText(`${lA>=0?'+':''}${lA.toFixed(1)}%`,W-48,yOf(lA)-4);
-  ctx.fillStyle='rgba(251,191,36,.8)';ctx.fillText(`CDI ${lC.toFixed(1)}%`,W-58,yOf(lC)+12);
+  ctx.fillStyle=color;ctx.fillText((lA>=0?'+':'')+lA.toFixed(1)+'%',W-46,yOf(lA)-4);
+  ctx.fillStyle='rgba(251,191,36,.8)';ctx.fillText('CDI '+lC.toFixed(1)+'%',W-56,yOf(lC)+12);
 }
 
 async function loadBsHistChart(ticker,exchange){
-  const canvas=document.getElementById('bs-hist-canvas');
-  const meta=document.getElementById('bs-hist-meta');
+  var canvas=document.getElementById('bs-hist-canvas');
+  var meta=document.getElementById('bs-hist-meta');
   if(!canvas)return;
-  if(meta)meta.textContent='⏳ Buscando dados históricos via Brapi...';
-  const data=await fetchBrapiHistorico(ticker);
+  if(meta)meta.textContent='⏳ Buscando dados via Brapi...';
+  var data=await fetchBrapiHistorico(ticker);
   if(!data||data.length<2){if(meta)meta.textContent='⚠ Dados históricos não disponíveis para este ativo';return;}
-  const tc=TYPE_COLOR[getPositions().find(p=>p.ticker===ticker)?.type]||'#b4f048';
-  drawPerfChart(canvas,data,tc,getCDI());
-  const prices=data.map(d=>d.close||d.adjClose).filter(Boolean);
-  const ret=prices.length>=2?((prices[prices.length-1]-prices[0])/prices[0]*100):0;
-  const vs=ret-getCDI();
-  if(meta)meta.innerHTML=`<span class="${ret>=0?'up':'dn'}">${ret>=0?'+':'-'}${Math.abs(ret).toFixed(2)}%</span> nos últimos 12 meses &nbsp;·&nbsp; vs CDI: <span class="${vs>=0?'up':'dn'}">${vs>=0?'+':'-'}${Math.abs(vs).toFixed(1)}pp</span>`;
+  var tc=TYPE_COLOR[(getPositions().find(function(p){return p.ticker===ticker;})||{}).type]||'#b4f048';
+  setTimeout(function(){drawPerfChart(canvas,data,tc,getCDI());},50);
+  var prices=data.map(function(d){return d.close;}).filter(Boolean);
+  var ret=prices.length>=2?((prices[prices.length-1]-prices[0])/prices[0]*100):0;
+  var vs=ret-getCDI();
+  if(meta)meta.innerHTML='<span class="'+(ret>=0?'up':'dn')+'">'+(ret>=0?'+':'-')+Math.abs(ret).toFixed(2)+'%</span> · 12 meses &nbsp;·&nbsp; vs CDI: <span class="'+(vs>=0?'up':'dn')+'">'+(vs>=0?'+':'-')+Math.abs(vs).toFixed(1)+'pp</span>';
 }
 
-// ── RANKING ────────────────────────────────────────────────────
+// ── ABA RANKING ───────────────────────────────────────────────
 function renderBsRanking(){
-  const area=document.getElementById('bs-ranking-area');if(!area)return;
-  const positions=getPositions().filter(p=>p.qty>0);
+  var area=document.getElementById('bs-ranking-area');if(!area)return;
+  var positions=getPositions().filter(function(p){return p.qty>0;});
   if(!positions.length){area.innerHTML='<div style="color:var(--muted2);padding:20px">Nenhuma posição ativa</div>';return;}
-  const scored=positions.map(pos=>({pos,sc:calcCompositeScore(pos)})).sort((a,b)=>b.sc.score-a.sc.score);
-  const labels=['FORTE COMPRA','COMPRA','NEUTRO','ATENÇÃO','REVISAR'];
-  const lcols=['#22c55e','#86efac','#fbbf24','#fb923c','#f87171'];
-  const dist=labels.map((l,i)=>({label:l,color:lcols[i],count:scored.filter(s=>s.sc.label===l).length}));
-  const rows=scored.map(({pos,sc},i)=>{
-    const r=calcResult(pos);const tc=TYPE_COLOR[pos.type]||'#94a3b8';
-    return`<tr style="cursor:pointer" onclick="setBsTab('analise');setTimeout(()=>loadBsAnalise('${pos.ticker}'),80)">
-      <td style="text-align:center;font-size:11px;color:var(--muted2);width:28px">${i+1}</td>
-      <td><span style="font-weight:700;color:${tc}">${pos.ticker}</span></td>
-      <td style="font-size:9px;color:var(--muted2)">${pos.type}</td>
-      <td style="min-width:100px">
-        <div style="display:flex;align-items:center;gap:6px">
-          <div style="width:48px;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden"><div style="width:${sc.score}%;height:100%;background:${sc.color}"></div></div>
-          <span style="font-size:11px;font-weight:700;color:${sc.color}">${sc.score}</span>
-        </div>
-      </td>
-      <td><span style="font-size:8.5px;padding:3px 9px;border-radius:8px;background:${sc.color}12;color:${sc.color};border:1px solid ${sc.color}28;font-weight:700">${sc.label}</span></td>
-      <td class="${r.pct>=0?'up':'dn'}" style="white-space:nowrap">${r.pct>=0?'+':'-'}${Math.abs(r.pct||0).toFixed(2)}%</td>
-      <td class="${r.result>=0?'up':'dn'}" style="white-space:nowrap">${r.result>=0?'+':'-'}R$ ${fNum(Math.abs(r.result||0))}</td>
-    </tr>`;
+  var scored=positions.map(function(pos){return{pos:pos,sc:calcCompositeScore(pos)};}).sort(function(a,b){return b.sc.score-a.sc.score;});
+  var dist=['FORTE COMPRA','COMPRA','NEUTRO','ATENÇÃO','REVISAR'].map(function(l,i){
+    var colors=['#22c55e','#86efac','#fbbf24','#fb923c','#f87171'];
+    var cnt=scored.filter(function(s){return s.sc.label===l;}).length;
+    return cnt>0?'<div style="text-align:center;background:var(--bg2);border:1px solid '+colors[i]+'28;border-radius:8px;padding:10px 14px"><div style="font-size:20px;font-weight:700;color:'+colors[i]+'">'+cnt+'</div><div style="font-size:8px;color:var(--muted2)">'+l+'</div></div>':'';
   }).join('');
-  area.innerHTML=`
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
-      ${dist.filter(d=>d.count>0).map(d=>`<div style="text-align:center;background:var(--bg2);border:1px solid ${d.color}28;border-radius:8px;padding:10px 16px">
-        <div style="font-size:22px;font-weight:700;color:${d.color}">${d.count}</div>
-        <div style="font-size:8px;color:var(--muted2)">${d.label}</div>
-      </div>`).join('')}
-    </div>
-    <div class="card" style="padding:0">
-      <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse">
-          <thead><tr>
-            <th style="width:28px">#</th><th style="text-align:left">Ticker</th><th style="text-align:left">Tipo</th>
-            <th style="text-align:left;min-width:110px">Score</th><th style="text-align:left">Veredito</th>
-            <th style="text-align:left">P&L%</th><th style="text-align:left">Resultado</th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-    </div>
-    <div style="font-size:8px;color:var(--muted2);margin-top:8px;text-align:right">Score = 35% Momentum vs CDI + 25% DY + 25% Tendência Preço + 15% Meta Bússola · Clique numa linha para ver análise detalhada</div>`;
+  var rows=scored.map(function(item,i){
+    var pos=item.pos;var sc=item.sc;var r=calcResult(pos);var tc=TYPE_COLOR[pos.type]||'#94a3b8';
+    return '<tr style="cursor:pointer" onclick="setBsTab(\'analise\');setTimeout(function(){loadBsAnalise(\''+pos.ticker+'\');},80)">'
+      +'<td style="text-align:center;font-size:11px;color:var(--muted2)">'+(i+1)+'</td>'
+      +'<td><span style="font-weight:700;color:'+tc+'">'+pos.ticker+'</span></td>'
+      +'<td style="font-size:9px;color:var(--muted2)">'+pos.type+'</td>'
+      +'<td><div style="display:flex;align-items:center;gap:6px"><div style="width:48px;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden"><div style="width:'+sc.score+'%;height:100%;background:'+sc.color+'"></div></div><span style="font-size:11px;font-weight:700;color:'+sc.color+'">'+sc.score+'</span></div></td>'
+      +'<td><span style="font-size:8.5px;padding:3px 9px;border-radius:8px;background:'+sc.color+'12;color:'+sc.color+';border:1px solid '+sc.color+'28;font-weight:700">'+sc.label+'</span></td>'
+      +'<td class="'+(r.pct>=0?'up':'dn')+'" style="white-space:nowrap">'+(r.pct>=0?'+':'-')+Math.abs(r.pct||0).toFixed(2)+'%</td>'
+      +'<td class="'+(r.result>=0?'up':'dn')+'" style="white-space:nowrap">'+(r.result>=0?'+':'-')+'R$ '+fNum(Math.abs(r.result||0))+'</td>'
+      +'</tr>';
+  }).join('');
+  area.innerHTML='<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">'+dist+'</div>'
+    +'<div class="card" style="padding:0"><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><thead><tr><th style="width:28px">#</th><th style="text-align:left">Ticker</th><th style="text-align:left">Tipo</th><th style="text-align:left;min-width:110px">Score</th><th style="text-align:left">Veredito</th><th style="text-align:left">P&L%</th><th style="text-align:left">Resultado</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'
+    +'<div style="font-size:8px;color:var(--muted2);margin-top:8px;text-align:right">Score = 35% Momentum + 25% DY + 25% Tendência + 15% Meta Bússola</div>';
 }
 
-// ── DESEMPENHO 12M ─────────────────────────────────────────────
+// ── ABA DESEMPENHO ────────────────────────────────────────────
 async function renderBsDesempenho(){
-  const area=document.getElementById('bs-desempenho-area');if(!area)return;
-  const positions=getPositions().filter(p=>p.qty>0).slice(0,9);
-  area.innerHTML=`
-    <div class="card mb-16">
-      <div class="card-title-row">
-        <div class="card-title" style="margin:0">📈 Retorno Acumulado 12 meses · vs CDI ${getCDI().toFixed(1)}% a.a.</div>
-        <span style="font-size:8.5px;color:var(--sky)">Brapi.dev histórico mensal</span>
-      </div>
-      <div id="bs-perf-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-top:14px"></div>
-    </div>
-    <div class="card"><div class="card-title">🥇 Ranking por Retorno 12m</div><div id="bs-perf-ranking" style="margin-top:8px"><div style="color:var(--muted2);font-size:11px">Carregando...</div></div></div>`;
-  const grid=document.getElementById('bs-perf-grid');
-  const results=[];
-  for(const pos of positions){
-    const tc=TYPE_COLOR[pos.type]||'#b4f048';
-    const cid=`bsc-${pos.ticker.replace(/[^a-z0-9]/gi,'')}`;
-    const card=document.createElement('div');card.className='bs-chart-card';
-    card.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:8px">
-      <span style="font-weight:700;color:${tc};font-size:13px">${pos.ticker}</span>
-      <span style="font-size:9px;color:var(--muted2)">${pos.type}</span>
-    </div>
-    <canvas id="${cid}" style="width:100%;height:110px;display:block"></canvas>
-    <div id="${cid}-m" style="font-size:8px;color:var(--muted2);margin-top:5px;text-align:center">⏳ carregando...</div>`;
+  var area=document.getElementById('bs-desempenho-area');if(!area)return;
+  var positions=getPositions().filter(function(p){return p.qty>0;}).slice(0,8);
+  var cdi=getCDI();
+  area.innerHTML='<div class="card mb-16"><div class="card-title-row"><div class="card-title" style="margin:0">📈 Retorno Acumulado 12m vs CDI '+cdi.toFixed(1)+'% a.a.</div><span style="font-size:8.5px;color:var(--sky)">Brapi.dev</span></div><div id="bs-perf-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px"></div></div><div class="card"><div class="card-title">🥇 Ranking 12m</div><div id="bs-perf-rank" style="margin-top:8px"><div style="color:var(--muted2);font-size:11px">Carregando...</div></div></div>';
+  var grid=document.getElementById('bs-perf-grid');
+  var results=[];
+  positions.forEach(function(pos){
+    var tc=TYPE_COLOR[pos.type]||'#b4f048';
+    var cid='bsc'+pos.ticker.replace(/[^a-z0-9]/gi,'');
+    var card=document.createElement('div');card.style.cssText='background:var(--bg2);border:1px solid '+tc+'18;border-radius:12px;padding:12px';
+    card.innerHTML='<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-weight:700;color:'+tc+';font-size:13px">'+pos.ticker+'</span><span style="font-size:9px;color:var(--muted2)">'+pos.type+'</span></div><canvas id="'+cid+'" style="width:100%;height:100px;display:block"></canvas><div id="'+cid+'m" style="font-size:8px;color:var(--muted2);margin-top:4px;text-align:center">⏳ carregando...</div>';
     grid.appendChild(card);
-    fetchBrapiHistorico(pos.ticker).then(data=>{
-      const canvas=document.getElementById(cid);const meta=document.getElementById(cid+'-m');
+    fetchBrapiHistorico(pos.ticker).then(function(data){
+      var canvas=document.getElementById(cid);var meta=document.getElementById(cid+'m');
       if(!data||data.length<2){if(meta)meta.textContent='Dados não disponíveis';return;}
-      drawPerfChart(canvas,data,tc,getCDI());
-      const prices=data.map(d=>d.close||d.adjClose).filter(Boolean);
-      const ret=prices.length>=2?((prices[prices.length-1]-prices[0])/prices[0]*100):0;
-      if(meta)meta.innerHTML=`<span class="${ret>=0?'up':'dn'}">${ret>=0?'+':'-'}${Math.abs(ret).toFixed(2)}%</span> · 12 meses`;
-      results.push({ticker:pos.ticker,ret,type:pos.type,color:tc});
-      updateBsPerfRanking(results);
+      setTimeout(function(){drawPerfChart(canvas,data,tc,cdi);},50);
+      var prices=data.map(function(d){return d.close;}).filter(Boolean);
+      var ret=prices.length>=2?((prices[prices.length-1]-prices[0])/prices[0]*100):0;
+      if(meta)meta.innerHTML='<span class="'+(ret>=0?'up':'dn')+'">'+(ret>=0?'+':'-')+Math.abs(ret).toFixed(2)+'%</span> · 12m';
+      results.push({ticker:pos.ticker,ret:ret,type:pos.type,color:tc});
+      var el=document.getElementById('bs-perf-rank');
+      if(!el)return;
+      var sorted=results.slice().sort(function(a,b){return b.ret-a.ret;});
+      el.innerHTML=sorted.map(function(rv,i){
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">'
+          +'<div style="display:flex;align-items:center;gap:10px"><span style="font-size:10px;color:var(--muted2);width:18px">'+(i+1)+'.</span><span style="font-weight:700;color:'+rv.color+';font-size:13px">'+rv.ticker+'</span><span style="font-size:8px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--muted2)">'+rv.type+'</span></div>'
+          +'<div style="display:flex;gap:12px;align-items:center"><span style="font-size:9px;color:var(--muted2)">vs CDI <span class="'+(rv.ret-cdi>=0?'up':'dn')+'">'+(rv.ret-cdi>=0?'+':'-')+Math.abs(rv.ret-cdi).toFixed(1)+'pp</span></span><span class="'+(rv.ret>=0?'up':'dn')+'" style="font-size:13px;font-weight:700">'+(rv.ret>=0?'+':'-')+Math.abs(rv.ret).toFixed(2)+'%</span></div>'
+          +'</div>';
+      }).join('');
     });
-  }
+  });
 }
 
-function updateBsPerfRanking(results){
-  const el=document.getElementById('bs-perf-ranking');if(!el)return;
-  const sorted=[...results].sort((a,b)=>b.ret-a.ret);const cdi=getCDI();
-  el.innerHTML=sorted.map((r,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
-    <div style="display:flex;align-items:center;gap:10px">
-      <span style="font-size:10px;color:var(--muted2);width:18px">${i+1}.</span>
-      <span style="font-weight:700;color:${r.color};font-size:13px">${r.ticker}</span>
-      <span style="font-size:8px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--muted2)">${r.type}</span>
-    </div>
-    <div style="display:flex;align-items:center;gap:14px">
-      <span style="font-size:9px;color:var(--muted2)">vs CDI: <span class="${r.ret-cdi>=0?'up':'dn'}">${r.ret-cdi>=0?'+':'-'}${Math.abs(r.ret-cdi).toFixed(1)}pp</span></span>
-      <span class="${r.ret>=0?'up':'dn'}" style="font-size:13px;font-weight:700">${r.ret>=0?'+':'-'}${Math.abs(r.ret).toFixed(2)}%</span>
-    </div>
-  </div>`).join('');
-}
-
-// ── DESCOBERTAS ────────────────────────────────────────────────
-async function renderBsDescovertas(){
-  const area=document.getElementById('bs-descobertas-area');if(!area)return;
-  const portfolio=new Set(getPositions().map(p=>p.ticker));
-  const catalog=DESCOBERTAS_CAT.filter(d=>!portfolio.has(d.t));
-  const types=['FI-INFRA','FIAGRO','FII','ETF'];
-  const typeIcons={'FI-INFRA':'🛤️','FIAGRO':'🌾','FII':'🏢','ETF':'📦'};
-  area.innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div>
-        <div style="font-size:13px;font-weight:700;color:var(--lime)">☀️ Novos Caminhos · Oportunidades de Mercado</div>
-        <div style="font-size:8.5px;color:var(--muted2);margin-top:3px">Ativos fora da carteira atual · ETF, FII, FI-INFRA, FIAGRO · cotações ao vivo</div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="renderBsDescovertas()">↻</button>
-    </div>
-    <div style="background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:8px;padding:8px 12px;margin-bottom:16px;font-size:8.5px;color:var(--amber)">
-      ⚠ Informativo · Não constitui recomendação de investimento · Avalie com seu assessor
-    </div>
-    ${types.map(type=>{
-      const items=catalog.filter(d=>d.type===type);if(!items.length)return'';
-      const tc=TYPE_COLOR[type]||'#94a3b8';
-      return`<div class="chart-box mb-14">
-        <div class="card-title">${typeIcons[type]} ${type}</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px">
-          ${items.map(d=>`<div class="desc-card" id="desc-${d.t}" style="border-color:${tc}18">
-            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-              <div>
-                <div style="font-weight:700;font-size:13px;color:${tc}">${d.t}</div>
-                <div style="font-size:8.5px;color:var(--muted2);margin-top:2px">${d.n}</div>
-              </div>
-              <span style="font-size:8px;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--muted2);align-self:flex-start">${d.seg}</span>
-            </div>
-            <div id="desc-d-${d.t}" style="font-size:9px;color:var(--muted2)">⏳ buscando...</div>
-            <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px;font-size:8.5px" onclick="quickAddTransaction('${d.t}')">+ Adicionar à Carteira</button>
-          </div>`).join('')}
-        </div>
-      </div>`;
-    }).join('')}`;
-  // Buscar cotações B3
-  const brTickers=catalog.filter(d=>d.ex==='B3').map(d=>d.t);
-  if(brTickers.length){
-    try{
-      const token=cfg.brapiKey?`?token=${cfg.brapiKey}`:'';
-      const r=await fetch(`https://brapi.dev/api/quote/${brTickers.join(',')}${token}`,{signal:AbortSignal.timeout(10000)});
-      const j=await r.json();
-      (j?.results||[]).forEach(q=>{
-        const el=document.getElementById('desc-d-'+q.symbol);if(!el)return;
-        const chg=q.regularMarketChangePercent||0;
-        el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <span style="font-size:14px;font-weight:600">R$ ${(q.regularMarketPrice||0).toFixed(2)}</span>
-          <span class="${chg>=0?'up':'dn'}" style="font-size:10px">${chg>=0?'+':'-'}${Math.abs(chg).toFixed(2)}%</span>
-        </div>`;
-      });
-    }catch(e){}
-  }
-}
-
-// ── CLAUDE IA · ANÁLISE DE PORTFÓLIO ──────────────────────────
+// ── ABA CLAUDE IA ─────────────────────────────────────────────
 function renderBsIaPanel(){
-  const warn=document.getElementById('ia-key-warn');
+  var warn=document.getElementById('ia-key-warn');
   if(warn)warn.style.display=cfg.anthropicKey?'none':'block';
+  renderIaHistorico();
+}
+
+function renderIaHistorico(){
+  var el=document.getElementById('ia-historico');if(!el)return;
+  if(!iaLog.length){el.innerHTML='';return;}
+  var rows=iaLog.map(function(e){
+    var modeLabel=e.mode==='rapida'?'⚡ Rápida':e.mode==='completa'?'🔬 Completa':'🛡 Stress Test';
+    return '<div class="ia-sec"><div class="ia-sec-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\'">'
+      +'<div><span style="font-size:10px;font-weight:700">'+modeLabel+'</span><div style="font-size:8px;color:var(--muted2);margin-top:2px">'+e.label+' · '+e.ativos+' ativos</div></div>'
+      +'<button class="tc-btn del" onclick="event.stopPropagation();deleteIaEntry(\''+e.id+'\')" title="Remover">✕</button></div>'
+      +'<div class="ia-sec-body" style="display:none">'+escHtml(e.text)+'</div></div>';
+  }).join('');
+  el.innerHTML='<div style="font-size:9px;letter-spacing:.12em;color:var(--sky);text-transform:uppercase;margin:16px 0 10px">📂 Histórico de Análises</div>'+rows;
+}
+
+function deleteIaEntry(id){
+  iaLog=iaLog.filter(function(e){return e.id!==id;});
+  saveIaLog();renderIaHistorico();
+}
+
+function escHtml(s){
+  if(!s)return'';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
 }
 
 async function runClaudeAnalysis(mode){
   if(!cfg.anthropicKey){showToast('Configure a chave Anthropic API em Ajustes','e');return;}
-  const positions=getPositions().filter(p=>p.qty>0);
-  if(!positions.length){showToast('Nenhum ativo ativo na carteira','e');return;}
-  const status=document.getElementById('ia-status');
-  const result=document.getElementById('ia-result');
-  const ts=document.getElementById('ia-timestamp');
+  var positions=getPositions().filter(function(p){return p.qty>0;});
+  if(!positions.length){showToast('Nenhum ativo na carteira','e');return;}
+  var status=document.getElementById('ia-status');
+  var result=document.getElementById('ia-result');
+  var ts=document.getElementById('ia-timestamp');
   if(status){status.style.display='block';status.innerHTML='<div class="ai-typing">⏳ Claude analisando sua carteira</div>';}
   if(result)result.style.display='none';
   if(ts)ts.style.display='none';
-  // Montar snapshot da carteira
-  const tv=totalValue();
-  const portfolioData=positions.map(pos=>{
-    const r=calcResult(pos);const sc=calcCompositeScore(pos);const q=getQ(pos.ticker);
-    const invested=pos.exchange==='NYSE'?pos.avg*getDolar()*pos.qty:pos.avg*pos.qty;
-    const totalProv=proventos.filter(p=>p.ticker===pos.ticker).reduce((s,p)=>s+((p.value||p.amount||0)*(p.qty||1)),0);
-    return{ticker:pos.ticker,tipo:pos.type,segmento:pos.segmento||'—',bolsa:pos.exchange,custodia:pos.sector||'—',
-      qtd:pos.qty,precoMedio:pos.avg,cotacaoAtual:q?.price||pos.avg,
-      investidoBRL:+invested.toFixed(2),valorAtualBRL:+(priceBRL(pos)*pos.qty).toFixed(2),
-      resultadoBRL:+(r.result||0).toFixed(2),plPct:+(r.pct||0).toFixed(2),
-      varDia:+(q?.changePct||0).toFixed(2),pesoCarteira:tv>0?+((priceBRL(pos)*pos.qty/tv*100).toFixed(2)):0,
-      proventosRecebidos:+totalProv.toFixed(2),dyEstimado:invested>0?+((totalProv/invested*100).toFixed(2)):0,
-      scoreVela:sc.score,veredito:sc.label};
+  var tv=totalValue();
+  var pdata=positions.map(function(pos){
+    var r=calcResult(pos);var sc=calcCompositeScore(pos);var q=getQ(pos.ticker);
+    var inv=pos.exchange==='NYSE'?pos.avg*getDolar()*pos.qty:pos.avg*pos.qty;
+    var prov=proventos.filter(function(p){return p.ticker===pos.ticker;}).reduce(function(s,p){return s+((p.value||p.amount||0)*(p.qty||1));},0);
+    return{ticker:pos.ticker,tipo:pos.type,bolsa:pos.exchange,custodia:pos.sector||'—',qtd:pos.qty,precoMedio:+pos.avg.toFixed(2),cotacao:+(q?q.price:pos.avg).toFixed(2),investido:+inv.toFixed(2),valorAtual:+(priceBRL(pos)*pos.qty).toFixed(2),resultado:+(r.result||0).toFixed(2),plPct:+(r.pct||0).toFixed(2),varDia:+(q?q.changePct:0).toFixed(2),peso:tv>0?+((priceBRL(pos)*pos.qty/tv*100).toFixed(2)):0,dy:inv>0?+((prov/inv*100).toFixed(2)):0,score:sc.score,veredito:sc.label};
   });
-  const macroCtx={CDI:getCDI().toFixed(2)+'%',IPCA:getIPCA().toFixed(2)+'%',USDBRL:getDolar().toFixed(4),
-    IBOV:quotes['IDX_IBOV']?.price||'—',IFIX:quotes['IDX_IFIX']?.price||'—',
-    SP500:quotes['IDX_SP500']?.price||'—',dataFotografia:dataSnapshot?.label||new Date().toLocaleDateString('pt-BR')};
-  const prompts={
-    rapida:`Você é um analista quantitativo sênior especializado em carteiras brasileiras (FIIs, FI-INFRA, FIAGRO, ETFs) e NYSE. Escreva com precisão técnica e recomendações diretas e acionáveis. Use emojis como marcadores visuais. Use formato Markdown com ** para negrito.\n\nSNAPSHOT DA CARTEIRA (${new Date().toLocaleDateString('pt-BR')}):\n${JSON.stringify(portfolioData,null,1)}\n\nCONTEXTO MACRO:\n${JSON.stringify(macroCtx)}\n\nEXECUTE:\n\n**📊 1. RADIOGRAFIA**\n- Concentração por tipo e segmento (tabela %)\n- Exposição BRL vs USD\n- Top 3 maiores posições\n\n**⚖️ 2. RISCO**\n- Impacto estimado Selic +2pp\n- Drawdown estimado cenário queda -20% IBOV\n- Vulnerabilidades identificadas\n\n**📈 3. PERFORMANCE**\n- Rentabilidade geral vs CDI (em pp)\n- DY médio ponderado da carteira\n- 2 melhores e 2 piores ativos em P&L\n\n**🎯 4. RECOMENDAÇÕES**\n- Rebalanceamentos urgentes\n- Próximo aporte: onde alocar\n- 1 ativo para reforçar, 1 para monitorar\n\n**📋 SUMÁRIO EXECUTIVO** (5 bullets concisos)\n\nTom: Wall Street meets Faria Lima. Direto ao ponto.`,
-    completa:`Você é um analista quantitativo sênior especializado em carteiras brasileiras e NYSE. Seja técnico, direto e acionável. Use Markdown com ** para negrito e tabelas quando relevante.\n\nSNAPSHOT DA CARTEIRA:\n${JSON.stringify(portfolioData,null,1)}\n\nCONTEXTO MACRO:\n${JSON.stringify(macroCtx)}\n\nANÁLISE COMPLETA:\n\n**📊 1. RADIOGRAFIA DETALHADA**\n- Tabela completa: tipo | valor | peso% | P&L%\n- Concentração geográfica (BRL/USD split)\n- Análise de liquidez por ativo\n\n**⚖️ 2. ANÁLISE DE RISCO**\n- Sensibilidade a juros por categoria\n- Risco de crédito nos ativos de RF\n- Drawdown histórico estimado por tipo\n- Correlações qualitativas entre grupos\n\n**🌐 3. CENÁRIOS MACRO**\n- Base: impacto sobre carteira\n- Adverso: Selic >15%, dólar >R$6, recessão\n- Oportunidade: corte de juros, recuperação IBOV\n\n**📈 4. PERFORMANCE DETALHADA**\n- Rentabilidade vs CDI vs IPCA (em pp)\n- DY ponderado vs CDI (%) \n- Ranking completo por P&L\n- Proventos recebidos totais\n\n**🎯 5. RECOMENDAÇÕES ESTRATÉGICAS**\n- Rebalanceamentos prioritários\n- Distribuição ideal do próximo aporte\n- Ativos para reforçar, monitorar e considerar redução\n- Gaps de diversificação a cobrir\n\n**📋 SUMÁRIO EXECUTIVO** — 5 bullets, tom Faria Lima/Wall Street`,
-    risco:`Você é um especialista em gestão de risco de carteiras, com foco em mercados brasileiro e americano. Seja quantitativo e acionável. Use Markdown.\n\nCARTEIRA:\n${JSON.stringify(portfolioData,null,1)}\n\nMACRO: CDI ${macroCtx.CDI} | IPCA ${macroCtx.IPCA} | USD ${macroCtx.USDBRL}\n\nSTRESS TEST E ANÁLISE DE RISCO:\n\n**🛡 1. MATRIZ DE RISCO POR ATIVO**\n- Para cada ativo: risco de mercado | crédito | liquidez | cambial\n- Escala: Baixo/Médio/Alto\n\n**📉 2. STRESS TEST — 3 CENÁRIOS**\n- Crise de crédito BR: impacto estimado na carteira\n- Choque cambial (USD > R$7): impacto\n- Recessão global (S&P -30%): impacto\n\n**⚡ 3. TAIL RISK**\n- Cenários de cauda (probabilidade qualitativa)\n- Pior drawdown estimado 12m\n- Correlações em momentos de stress\n\n**🔒 4. PROTEÇÕES SUGERIDAS**\n- Hedges naturais já existentes na carteira\n- Gaps de proteção identificados\n- Ações concretas para reduzir risco\n\n**📋 SUMÁRIO DE RISCO** — Rating geral da carteira + top 3 vulnerabilidades`
+  var macro={CDI:getCDI().toFixed(2)+'%',IPCA:getIPCA().toFixed(2)+'%',USDBRL:getDolar().toFixed(4),IBOV:(quotes['IDX_IBOV']||{}).price||'—',IFIX:(quotes['IDX_IFIX']||{}).price||'—',data:new Date().toLocaleDateString('pt-BR')};
+  var prompts={
+    rapida:'Você é um analista quantitativo sênior especializado em carteiras brasileiras (FIIs, FI-INFRA, FIAGRO, ETFs) e NYSE. Seja técnico, direto e acionável. Use ** para negrito.\n\nCARTEIRA ('+macro.data+'):\n'+JSON.stringify(pdata)+'\n\nMACRO: CDI '+macro.CDI+' | IPCA '+macro.IPCA+' | USD '+macro.USDBRL+' | IBOV '+macro.IBOV+'\n\nANALISE:\n\n**📊 RADIOGRAFIA**\n- Concentração por tipo e segmento\n- Exposição BRL vs USD\n- Top 3 posições e risco\n\n**⚖️ RISCO**\n- Impacto Selic +2pp\n- Drawdown estimado cenário -20% IBOV\n\n**📈 PERFORMANCE**\n- Rentabilidade vs CDI (em pp)\n- DY médio ponderado\n- Melhores e piores em P&L\n\n**🎯 RECOMENDAÇÕES**\n- Próximo aporte: onde alocar\n- 1 ativo para reforçar, 1 para monitorar\n\n**📋 SUMÁRIO** (5 bullets · tom Faria Lima)',
+    completa:'Você é um analista quantitativo sênior. Use ** para negrito e tabelas quando necessário.\n\nCARTEIRA:\n'+JSON.stringify(pdata)+'\n\nMACRO: CDI '+macro.CDI+' | IPCA '+macro.IPCA+' | USD '+macro.USDBRL+'\n\n**📊 RADIOGRAFIA DETALHADA** — tabela tipo|valor|peso%|P&L%\n**⚖️ RISCO** — sensibilidade juros, risco crédito, drawdown, correlações\n**🌐 CENÁRIOS** — base/adverso/oportunidade\n**📈 PERFORMANCE** — vs CDI, vs IPCA, DY ponderado, ranking completo\n**🎯 RECOMENDAÇÕES** — rebalanceamentos, aporte, gaps de diversificação\n**📋 SUMÁRIO EXECUTIVO** — 5 bullets · Wall Street/Faria Lima',
+    risco:'Você é especialista em gestão de risco. Use ** para negrito.\n\nCARTEIRA:\n'+JSON.stringify(pdata)+'\n\nMACRO: CDI '+macro.CDI+' | IPCA '+macro.IPCA+' | USD '+macro.USDBRL+'\n\n**🛡 MATRIZ DE RISCO** — cada ativo: mercado|crédito|liquidez|cambial (Baixo/Médio/Alto)\n**📉 STRESS TEST** — crise crédito BR, choque cambial USD>R$7, recessão global -30%\n**⚡ TAIL RISK** — cenários cauda, drawdown máximo estimado\n**🔒 PROTEÇÕES** — hedges naturais, gaps, ações concretas\n**📋 SUMÁRIO** — rating geral + top 3 vulnerabilidades'
   };
-  const prompt=prompts[mode]||prompts.rapida;
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':cfg.anthropicKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2000,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2000,messages:[{role:'user',content:prompts[mode]||prompts.rapida}]})
     });
-    if(!res.ok){const e=await res.json();throw new Error(e?.error?.message||'Erro '+res.status);}
-    const data=await res.json();
-    const text=data.content?.map(c=>c.text||'').join('');
-    if(!text)throw new Error('Resposta vazia');
-    bsIaCache={text,mode,ts:new Date()};
+    if(!res.ok){var err=await res.json();throw new Error((err.error&&err.error.message)||'Erro HTTP '+res.status);}
+    var data=await res.json();
+    var text=data.content&&data.content.map(function(c){return c.text||'';}).join('');
+    if(!text)throw new Error('Resposta vazia da API');
+    var entry={id:Date.now().toString(36),ts:new Date().toISOString(),label:new Date().toLocaleDateString('pt-BR')+' '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),mode:mode,text:text,ativos:positions.length};
+    iaLog.unshift(entry);iaLog=iaLog.slice(0,5);saveIaLog();
     if(status)status.style.display='none';
-    if(result){result.style.display='block';result.innerHTML=renderIaMarkdown(text);}
-    if(ts){ts.style.display='block';ts.textContent=`Análise ${mode==='rapida'?'Rápida':mode==='completa'?'Completa':'Stress Test'} · ${new Date().toLocaleString('pt-BR')}`;}
-    showToast('Análise Claude concluída ✓','s');
+    if(result){result.style.display='block';result.innerHTML='<div class="ia-sec"><div class="ia-sec-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\'"><span style="font-weight:700">Resultado da Análise</span><span style="color:var(--muted2);font-size:10px">▾ clique para expandir/recolher</span></div><div class="ia-sec-body">'+escHtml(text)+'</div></div>';}
+    if(ts){ts.style.display='block';ts.textContent='Gerado em '+new Date().toLocaleString('pt-BR');}
+    renderIaHistorico();
+    showToast('Análise concluída e salva ✓','s');
   }catch(e){
-    if(status){status.style.display='block';status.innerHTML=`<span style="color:var(--rose)">❌ Erro: ${e.message}</span>`;}
-    showToast('Erro na análise: '+e.message,'e');
+    if(status){status.style.display='block';status.innerHTML='<span style="color:var(--rose)">❌ '+escHtml(e.message)+'</span>';}
+    showToast('Erro: '+e.message,'e');
   }
 }
 
-function renderIaMarkdown(text){
-  // Converter markdown simples para HTML estilizado
-  const sections=text.split(/\n(?=\*\*[📊⚖️🌐📈🎯📋🛡📉⚡🔒])/);
-  if(sections.length<=1){
-    return`<div class="card"><div style="font-size:11px;line-height:1.8;white-space:pre-wrap">${escHtml(text)}</div></div>`;
+// ── ABA DESCOBERTAS ───────────────────────────────────────────
+async function renderBsDescovertas(){
+  var area=document.getElementById('bs-descobertas-area');if(!area)return;
+  var portfolio=new Set(getPositions().map(function(p){return p.ticker;}));
+  var catalog=DESCOBERTAS_CAT.filter(function(d){return!portfolio.has(d.t);});
+  var types=['FI-INFRA','FIAGRO','FII','ETF'];
+  var icons={'FI-INFRA':'🛤️','FIAGRO':'🌾','FII':'🏢','ETF':'📦'};
+  var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div><div style="font-size:13px;font-weight:700;color:var(--lime)">☀️ Novos Caminhos · Oportunidades</div><div style="font-size:9px;color:var(--muted2);margin-top:2px">ETF · FII · FI-INFRA · FIAGRO fora da sua carteira</div></div><button class="btn btn-ghost btn-sm" onclick="renderBsDescovertas()">↻</button></div><div style="background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:8px;padding:8px 12px;margin-bottom:16px;font-size:8.5px;color:var(--amber)">⚠ Informativo apenas · Não constitui recomendação de investimento</div>';
+  types.forEach(function(type){
+    var items=catalog.filter(function(d){return d.type===type;});
+    if(!items.length)return;
+    var tc=TYPE_COLOR[type]||'#94a3b8';
+    html+='<div class="chart-box mb-14"><div class="card-title">'+icons[type]+' '+type+'</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px">';
+    items.forEach(function(d){
+      html+='<div class="desc-card" id="desc-'+d.t+'" style="border-color:'+tc+'18"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><div><div style="font-weight:700;font-size:13px;color:'+tc+'">'+d.t+'</div><div style="font-size:8.5px;color:var(--muted2);margin-top:2px">'+d.n+'</div></div><span style="font-size:8px;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--muted2);align-self:flex-start">'+d.seg+'</span></div><div id="desc-d-'+d.t+'" style="font-size:9px;color:var(--muted2)">⏳ buscando...</div><button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px;font-size:8.5px" onclick="quickAddTransaction(\''+d.t+'\')">+ Adicionar à Carteira</button></div>';
+    });
+    html+='</div></div>';
+  });
+  area.innerHTML=html;
+  var brTickers=catalog.filter(function(d){return d.ex==='B3';}).map(function(d){return d.t;});
+  var batchSize=5;
+  for(var i=0;i<brTickers.length;i+=batchSize){
+    var batch=brTickers.slice(i,i+batchSize);
+    var token=cfg.brapiKey?'?token='+cfg.brapiKey:'';
+    try{
+      var resp=await fetch('https://brapi.dev/api/quote/'+batch.join(',')+token,{signal:AbortSignal.timeout(12000)});
+      if(!resp.ok)continue;
+      var j=await resp.json();
+      (j.results||[]).forEach(function(q){
+        var el=document.getElementById('desc-d-'+q.symbol);if(!el)return;
+        var price=q.regularMarketPrice||0;var chg=q.regularMarketChangePercent||0;
+        if(price>0)el.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600">R$ '+price.toFixed(2)+'</span><span class="'+(chg>=0?'up':'dn')+'" style="font-size:10px">'+(chg>=0?'+':'-')+Math.abs(chg).toFixed(2)+'%</span></div>';
+        else el.textContent='Indisponível';
+      });
+    }catch(e){}
+    if(i+batchSize<brTickers.length)await new Promise(function(res){setTimeout(res,500);});
   }
-  return sections.map(sec=>{
-    const titleMatch=sec.match(/^\*\*(.+?)\*\*/);
-    const title=titleMatch?titleMatch[1]:'';
-    const body=sec.replace(/^\*\*(.+?)\*\*/,'').trim();
-    const isOpen=sec.indexOf('SUMÁRIO')>=0||sec.indexOf('RADIOGRAFIA')>=0;
-    return`<div class="ai-result-section">
-      <div class="ai-result-section-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-        <span style="font-size:11px;font-weight:700;color:var(--text)">${escHtml(title)}</span>
-        <span style="font-size:11px;color:var(--muted2)">▾</span>
-      </div>
-      <div class="ai-result-section-body" style="display:${isOpen?'block':'block'}">
-        ${formatIaBody(body)}
-      </div>
-    </div>`;
-  }).join('');
+  if(cfg.fhEnabled&&cfg.fhKey){
+    var nyse=catalog.filter(function(d){return d.ex==='NYSE';});
+    for(var ni=0;ni<nyse.length;ni++){
+      try{
+        var nr=await fetch('https://finnhub.io/api/v1/quote?symbol='+nyse[ni].t+'&token='+cfg.fhKey,{signal:AbortSignal.timeout(8000)});
+        var nj=await nr.json();
+        if(nj&&nj.c){var nel=document.getElementById('desc-d-'+nyse[ni].t);if(!nel)continue;var nc=nj.dp||0;nel.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600">US$ '+nj.c.toFixed(2)+'</span><span class="'+(nc>=0?'up':'dn')+'" style="font-size:10px">'+(nc>=0?'+':'-')+Math.abs(nc).toFixed(2)+'%</span></div>';}
+      }catch(e){}
+    }
+  }
 }
-
-function formatIaBody(text){
-  return text
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g,'<em>$1</em>')
-    .replace(/`(.+?)`/g,'<code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:9.5px">$1</code>')
-    .replace(/^- (.+)$/gm,'<div style="display:flex;gap:6px;margin:3px 0"><span style="color:var(--lime);flex-shrink:0">·</span><span>$1</span></div>')
-    .replace(/^\d+\. (.+)$/gm,'<div style="display:flex;gap:6px;margin:3px 0"><span style="color:var(--sky);flex-shrink:0">›</span><span>$1</span></div>')
-    .replace(/\n\n/g,'<br><br>')
-    .replace(/\n/g,'<br>');
-}
-
-function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-// ──────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 
 // ── BÚSSOLA · ALOCAÇÃO-ALVO & REBALANCEAMENTO ─────────────────
 const K_TARGETS='vela_targets_v2';
@@ -2907,7 +2772,8 @@ function loadTargets(){try{bsTargets=JSON.parse(localStorage.getItem(K_TARGETS))
 function saveTargets(){localStorage.setItem(K_TARGETS,JSON.stringify(bsTargets))}
 
 function renderBussola(){
-  if(bsTab!=='alocacao')return; // só renderiza quando aba Alocação está ativa
+  if(typeof bsTab!=='undefined'&&bsTab!=='alocacao')return;
+  if(typeof bsTab!=='undefined'&&bsTab!=='alocacao')return;
   const cont=document.getElementById('bussola-table');if(!cont)return;
   const positions=getPositions().filter(p=>p.qty>0);
   const tv=totalValue();
@@ -4046,6 +3912,7 @@ function exportData(){
     version:APP_VER,exportDate:new Date().toISOString(),
     dataSnapshot,
     bsTargets,
+    iaLog:iaLog||[],
     state,quotes,snaps,proventos,rfAssets,
     // cfg completo incluindo chaves (backup pessoal do usuário)
     cfg:{...cfg},
@@ -4160,6 +4027,7 @@ function importData(){
         if(data.bsTargets&&typeof data.bsTargets==='object'&&Object.keys(data.bsTargets).length){
           bsTargets=data.bsTargets;saveTargets();
         }
+        if(Array.isArray(data.iaLog)&&data.iaLog.length){iaLog=data.iaLog.slice(0,5);}
 
         // ── Config: importa TUDO incluindo chaves API ────────────
         // Prioridade: data.cfg (v2) → data['vela_cfg_v1'] → localStorage da v1
@@ -4213,7 +4081,7 @@ function importData(){
 }
 function clearAll(){
   if(!confirm('Apagar TODOS os dados? Esta ação é irreversível.'))return;
-  state={assets:[]};quotes={};snaps=[];proventos=[];rfAssets=[];bsTargets={};dataSnapshot=null;
+  state={assets:[]};quotes={};snaps=[];proventos=[];rfAssets=[];bsTargets={};dataSnapshot=null;iaLog=[];
   // Limpar explicitamente todas as chaves do localStorage
   Object.values(K).forEach(key=>localStorage.removeItem(key));
   localStorage.removeItem(K_TARGETS);
@@ -4380,7 +4248,7 @@ function navigate(page){
   else if(page==='proventos')renderProventos();
   else if(page==='charts')renderCharts();
   else if(page==='heatmap')renderHeatmap();
-  else if(page==='bussola'){setBsTab(bsTab||'analise');}
+  else if(page==='bussola')setBsTab(bsTab||'analise');
   else if(page==='performance')renderPerformance();
   else if(page==='benchmarks')renderBenchmarks();
   else if(page==='settings')renderThemeSwitcher();
@@ -4474,7 +4342,7 @@ function syncSettings(){
 
 // ── INIT ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
-  load();loadTheme();syncSettings();setupAutoRefresh();loadDataSnapshot();loadTargets();
+  load();loadTheme();syncSettings();setupAutoRefresh();loadDataSnapshot();loadTargets();loadIaLog();
   setTimeout(updateQuoteTape,200);
   document.querySelectorAll('.nav-item[data-page]').forEach(el=>el.addEventListener('click',()=>navigate(el.dataset.page)));
   // Subtitle dinâmico
