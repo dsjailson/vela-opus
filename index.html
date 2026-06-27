@@ -71,7 +71,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 /* QUOTE BAR */
 #quote-bar{position:fixed;left:var(--sb);right:0;top:0;height:var(--qb);background:rgba(10,10,22,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;z-index:98;overflow:hidden;transition:left .28s ease}
 #qtape-track{flex:1;overflow:hidden;height:100%;position:relative}
-.qtape-inner{position:absolute;top:0;left:0;display:flex;align-items:center;height:100%;white-space:nowrap;animation:qtick 60s linear infinite;will-change:transform}
+.qtape-inner{position:absolute;top:0;left:0;display:inline-flex;align-items:center;white-space:nowrap;height:100%;will-change:transform}
 .qtape-inner:hover,.qtape-inner:focus{animation-play-state:paused}
 @keyframes qtick{from{transform:translateX(0)}to{transform:translateX(-50%)}}100%{transform:translateX(-50%)}}
 .qt{display:inline-flex;flex-direction:column;justify-content:center;gap:2px;padding:0 4px;height:100%;flex-shrink:0;min-width:80px}
@@ -418,6 +418,13 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
 .bs-ring svg{display:block}
 .bs-ring-lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 
+
+/* ── BÚSSOLA · PADRONIZAÇÃO DE LARGURA DAS ABAS ── */
+.bs-pane,.bs-pane.active{width:100%;max-width:100%;box-sizing:border-box}
+.bs-pane .card,.bs-pane .chart-box{width:100%;max-width:100%}
+.bs-pane .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}
+@media(max-width:700px){.bs-pane .grid-2{grid-template-columns:1fr}}
+#bs-analise-area,.card{max-width:100%}
 </style>
 </head>
 <body>
@@ -864,6 +871,21 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
         <div style="font-size:8.5px;color:var(--muted2);margin-top:7px">Fonte atual: <span id="ipca-source">—</span></div>
       </div>
     </div>
+    <!-- IDKA PRÉ 2A -->
+    <div class="card-shine" style="flex:1;min-width:220px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <span style="font-size:11.5px;font-weight:600">IDKA Pré 2A (%)</span>
+        <span style="font-size:8px;padding:2px 7px;border-radius:4px;background:rgba(167,139,250,.12);color:var(--violet)">ANBIMA</span>
+      </div>
+      <div style="font-size:26px;font-weight:700;color:var(--violet);letter-spacing:-.02em" id="bench-idka">—%</div>
+      <div style="font-size:9px;color:var(--muted2);margin-top:6px">Índice de Duração Constante · Pré-fixado 2 anos</div>
+      <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
+        <input type="number" id="idka-input" step="0.01" placeholder="ex: 13.45"
+          style="flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;font-size:11px;font-family:inherit">
+        <button onclick="saveIDKA()" style="background:var(--violet);border:none;color:#fff;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12px">✓</button>
+      </div>
+      <div style="font-size:8px;color:var(--muted2);margin-top:5px" id="idka-source">Entrada manual · BCB fallback automático</div>
+    </div>
   </div>
 </div>
 <!-- AJUSTES -->
@@ -880,12 +902,12 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
         <div class="cfg-row"><div><div class="cfg-label">📡 Finnhub — NYSE + índices US</div><div class="cfg-note">S&amp;P 500 · NASDAQ · tickers NYSE · chave necessária</div></div><div class="flex-row gap-12"><span class="api-dot api-off" id="dot-fh"></span><label class="sw"><input type="checkbox" id="tog-fh" onchange="toggleAPI('fh')"><span class="sw-track"></span></label></div></div>
         <div class="cfg-row"><div><div class="cfg-label">📊 Alpha Vantage — reforço B3 + NYSE</div><div class="cfg-note">Fallback global · chave necessária</div></div><div class="flex-row gap-12"><span class="api-dot api-off" id="dot-av"></span><label class="sw"><input type="checkbox" id="tog-av" onchange="toggleAPI('av')"><span class="sw-track"></span></label></div></div>
         <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
-          <div class="cfg-row" style="margin-bottom:0">
-            <div>
-              <div class="cfg-label">🔒 Proteger cotações manuais dos ativos</div>
-              <div class="cfg-note" id="protect-manual-note">Desativado · cotações automáticas substituem valores manuais</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <div style="min-width:0;flex:1">
+              <div class="cfg-label" style="white-space:nowrap">🔒 Proteger cotações manuais</div>
+              <div id="protect-manual-note" style="font-size:8px;color:var(--muted2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Desativado · auto substitui manual</div>
             </div>
-            <div class="flex-row gap-12">
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
               <span class="api-dot" id="dot-protect" style="background:var(--muted)"></span>
               <label class="sw"><input type="checkbox" id="tog-protect" onchange="toggleProtectManual(this.checked)"><span class="sw-track"></span></label>
             </div>
@@ -1107,7 +1129,7 @@ input:checked + .sw-track::after{transform:translateX(18px);background:var(--lim
 <div id="toast"></div>
 <script>
 'use strict';
-const APP_VER={product:'VELA OPUS',version:2,release:15,build:'2026-06-25',file:'vela-opus-v2r15.html'};
+const APP_VER={product:'VELA OPUS',version:2,release:15,build:'27/06/2026',file:'vela-opus-v2r15.html'};
 const K={STATE:'vela_state_v2',QUOTES:'vela_quotes_v2',SNAPS:'vela_snaps_v2',CFG:'vela_cfg_v2',PROV:'vela_prov_v2',RF:'vela_rf_v2',SNAPSHOT:'vela_data_snapshot_v2'};
 let dataSnapshot=null; // {timestamp:ISOString, label:'DD/MM/AAAA HH:MM'}
 const TYPE_COLOR={'Ação':'#b4f048','FII':'#fbbf24','FI-INFRA':'#22d3ee','FIAGRO':'#4ade80','ETF':'#4dc8f8','BDR':'#a78bfa','REITs':'#fb923c','Cripto':'#f87171','Outro':'#94a3b8','CDB':'#2dd4bf','LCI':'#34d399','LCA':'#10b981','RDB':'#059669','Tesouro Selic':'#f59e0b','Tesouro IPCA+':'#fbbf24','Tesouro Prefixado':'#d97706','ETF RF':'#4dc8f8','Debenture':'#a78bfa'};
@@ -1126,9 +1148,9 @@ const THEMES={
   floresta:{label:'Floresta',icon:'🌿',bg:'#020a04',bg2:'#041208',bg3:'#05180a',surface:'#07200e',surface2:'#092813',surface3:'#0c3019',lime:'#4ade80',sky:'#86efac'},
   magma:{label:'Magma',icon:'🌋',bg:'#0d0202',bg2:'#170404',bg3:'#1e0606',surface:'#280808',surface2:'#320a0a',surface3:'#3d0d0d',lime:'#f87171',sky:'#fb923c'},
   obsidian:{label:'Obsidian',icon:'💎',bg:'#04040a',bg2:'#080810',bg3:'#0d0d18',surface:'#111120',surface2:'#161628',surface3:'#1c1c32',lime:'#e2c46a',sky:'#c9a227'},
-  arctic:{label:'Ártico',icon:'🧊',bg:'#020b18',bg2:'#051525',bg3:'#0a1e32',surface:'#0f2840',surface2:'#14324e',surface3:'#193d5c',lime:'#38bdf8',sky:'#7dd3fc'},
-  ember:{label:'Brasa',icon:'🔥',bg:'#0f0a04',bg2:'#1a1008',bg3:'#231508',surface:'#2e1b0c',surface2:'#3a2210',surface3:'#462914',lime:'#fb923c',sky:'#fbbf24'},
-  forest:{label:'Floresta',icon:'🌿',bg:'#020d06',bg2:'#041a0c',bg3:'#072612',surface:'#0a3318',surface2:'#0e4020',surface3:'#124e28',lime:'#4ade80',sky:'#34d399'}
+  sakura:{label:'Sakura',icon:'🌸',bg:'#0a0409',bg2:'#130810',bg3:'#1c0e18',surface:'#280f22',surface2:'#32132a',surface3:'#3d1733',lime:'#f472b6',sky:'#e879f9'},
+  cosmos:{label:'Cosmos',icon:'🪐',bg:'#03010a',bg2:'#060315',bg3:'#0a0520',surface:'#10082e',surface2:'#150b3a',surface3:'#1b0f48',lime:'#ffd700',sky:'#a78bfa'},
+  terminal:{label:'Terminal',icon:'💻',bg:'#000000',bg2:'#050a05',bg3:'#0a120a',surface:'#0d1a0d',surface2:'#112211',surface3:'#152815',lime:'#00ff41',sky:'#39d353'}
 };
 
 let state={assets:[]},quotes={},snaps=[],proventos=[],rfAssets=[];
@@ -1515,6 +1537,7 @@ async function refreshAllQuotes(){
     if(!quotes['IDX_'+key])quotes['IDX_'+key]=simIndex(key);
   }
 
+  fetchIDKAPre2a();
   saveQ();updateUI();showToast('Cotações atualizadas ✓','s');
   setDataSnapshot();
 }
@@ -2355,6 +2378,8 @@ var bsHistorico={};
 var bsSelectedTicker=null;
 var iaLog=[];
 
+var BAKED_DISCOVERIES=[];
+// Descobertas geradas via Path B são adicionadas aqui
 var BAKED_ANALYSES=[{id:'b001',date:'25/06/2026',mode:'Path B',title:'An\u00e1lise Completa \u00b7 VELA OPUS \u00b7 25/06/2026',html:"<div style='font-family:monospace;font-size:10.5px;line-height:1.8;color:#e2e8f0'><div style='background:rgba(180,240,72,.06);border:1px solid rgba(180,240,72,.2);border-radius:8px;padding:12px 16px;margin-bottom:18px'><strong style='color:#b4f048'>CARTEIRA VELA OPUS &bull; 25/06/2026 &bull; PATH B</strong><br><span style='font-size:9px;color:#64748b'>27 ativos &bull; R$17.802 &bull; CDI 14,40% &bull; USD/BRL 5,14 &bull; IBOV 168.277 &bull; IFIX 3.799</span></div><div style='margin-bottom:16px'><strong style='color:#4dc8f8'>&#128202; 1. RADIOGRAFIA</strong><br><br><table style='width:100%;border-collapse:collapse;font-size:10px;margin:6px 0'><tr style='border-bottom:1px solid #334155'><th style='text-align:left'>Tipo</th><th>Valor</th><th>% Atual</th><th>Meta</th><th>Desvio</th></tr><tr style='border-bottom:1px solid #1e293b'><td>FII</td><td>R$8.519</td><td>47,9%</td><td>40%</td><td style='color:#f87171'>+7,9pp &#9650;</td></tr><tr style='border-bottom:1px solid #1e293b'><td>ETF</td><td>R$5.512</td><td>31,0%</td><td>40%</td><td style='color:#fbbf24'>-9,0pp &#9660;</td></tr><tr style='border-bottom:1px solid #1e293b'><td>FIAGRO</td><td>R$1.644</td><td>9,2%</td><td>5%</td><td style='color:#f87171'>+4,2pp &#9650;</td></tr><tr style='border-bottom:1px solid #1e293b'><td>Renda Fixa</td><td>R$1.405</td><td>7,9%</td><td>10%</td><td style='color:#fbbf24'>-2,1pp &#9660;</td></tr><tr><td>FI-INFRA</td><td>R$722</td><td>4,1%</td><td>5%</td><td style='color:#94a3b8'>-0,9pp</td></tr></table><strong>Top 5:</strong> &#128308; FTEC R$2.390 (13,4%) &#128309; RDB NU R$1.405 (7,9%) &#128309; CRAA11 R$1.121 (6,3%) &#128310; SNEL11 R$1.027 (5,8%) &#128310; MCCI11 R$762 (4,3%)<br><strong>Exposi&ccedil;&atilde;o USD:</strong> FTEC 13,4% + ETFs internacionais 7,5% = <strong style='color:#fbbf24'>~20,9% em d&oacute;lar</strong></div><div style='margin-bottom:16px'><strong style='color:#f87171'>&#9878; 2. RISCO E SENSIBILIDADE</strong><br><br><table style='width:100%;border-collapse:collapse;font-size:10px;margin:6px 0'><tr style='border-bottom:1px solid #334155'><th style='text-align:left'>Categoria</th><th>Selic +2pp</th><th>Selic -2pp</th></tr><tr style='border-bottom:1px solid #1e293b'><td>FIIs Tijolo</td><td style='color:#f87171'>-5% a -12%</td><td style='color:#34d399'>+8% a +15%</td></tr><tr style='border-bottom:1px solid #1e293b'><td>FIIs Papel (MCCI, IRIM)</td><td style='color:#94a3b8'>Neutro/+</td><td style='color:#fbbf24'>Neutro/-</td></tr><tr style='border-bottom:1px solid #1e293b'><td>FIAGRO / FI-INFRA</td><td style='color:#34d399'>+2% a +3%</td><td style='color:#fbbf24'>-1% a -2%</td></tr><tr style='border-bottom:1px solid #1e293b'><td>RDB NU</td><td style='color:#34d399'>+R$28/ano</td><td style='color:#fbbf24'>-R$28/ano</td></tr><tr><td>FTEC (Tech NYSE)</td><td style='color:#f87171'>-5% a -15%</td><td style='color:#34d399'>+10% a +20%</td></tr></table><strong>Drawdown m&aacute;ximo (IBOV -20% / IFIX -10%):</strong> <strong style='color:#f87171'>-R$1.236 (-6,9%)</strong><br>&acirc;ncora defensiva RDB+CRAA11+BINC11 = R$3.249 absorve o impacto<br><strong>Alertas cr&eacute;dito:</strong> CRAA11 <span style='color:#34d399'>[baixo]</span> &bull; BINC11 <span style='color:#34d399'>[baixo]</span> &bull; SNAG11 <span style='color:#fbbf24'>[monitorar CRA]</span><br><strong>Correla&ccedil;&atilde;o:</strong> CRAA11+SNAG11 = R$1.643 na mesma tese agro (risco setorial); FIIs Hedge: boa diversifica&ccedil;&atilde;o interna</div><div style='margin-bottom:16px'><strong style='color:#b4f048'>&#128200; 3. PERFORMANCE</strong><br><br>Proventos: <strong style='color:#b4f048'>R$207,17</strong> em 4 meses &bull; DY m&eacute;dio ponderado: <strong style='color:#b4f048'>~11,2% a.a.</strong> &bull; Gap vs CDI: <strong style='color:#fbbf24'>-3,2pp</strong><br><br><table style='width:100%;border-collapse:collapse;font-size:10px;margin:6px 0'><tr style='border-bottom:1px solid #334155'><th style='text-align:left'>Ticker</th><th>Tipo</th><th>DY est. a.a.</th><th>vs CDI 14,4%</th></tr><tr style='border-bottom:1px solid #1e293b'><td>SNEL11</td><td>FII H&iacute;brido</td><td style='color:#b4f048'>14,0%</td><td style='color:#34d399'>-0,4pp</td></tr><tr style='border-bottom:1px solid #1e293b'><td>CRAA11 / SNAG11</td><td>FIAGRO</td><td style='color:#b4f048'>13,8%</td><td style='color:#fbbf24'>-0,6pp</td></tr><tr style='border-bottom:1px solid #1e293b'><td>MCRE11</td><td>FII Hedge</td><td style='color:#b4f048'>13,7%</td><td style='color:#fbbf24'>-0,7pp</td></tr><tr style='border-bottom:1px solid #1e293b'><td>BINC11 / RBRX11</td><td>FI-INFRA/FII</td><td style='color:#fbbf24'>12,5%</td><td style='color:#fbbf24'>-1,9pp</td></tr><tr style='border-bottom:1px solid #1e293b'><td>KNHF11 / IRIM11</td><td>FII</td><td style='color:#fbbf24'>12,2%</td><td style='color:#fbbf24'>-2,2pp</td></tr><tr style='border-bottom:1px solid #1e293b'><td>XPML11</td><td>FII Shopping</td><td style='color:#fbbf24'>10,0%</td><td style='color:#f87171'>-4,4pp</td></tr><tr><td>FTEC</td><td>ETF NYSE</td><td style='color:#94a3b8'>6,8%</td><td style='color:#f87171'>-7,6pp</td></tr></table>Metas: FII <span style='color:#f87171'>+7,9pp acima</span> &bull; ETF <span style='color:#fbbf24'>-9,0pp abaixo</span> &bull; FIAGRO <span style='color:#f87171'>+4,2pp acima</span></div><div style='margin-bottom:16px'><strong style='color:#a78bfa'>&#127758; 4. CEN&Aacute;RIOS MACRO</strong><br><br><span style='color:#34d399'><strong>Base (55%)</strong></span> Selic ~14%, IFIX lateral: carteira ~11-12% a.a. via proventos. FTEC driver de apreciamento.<br><span style='color:#f87171'><strong>Adverso (20%)</strong></span> Selic &gt;15%, USD &gt;R$6: perda <strong style='color:#f87171'>-R$1.500 a -R$2.000</strong>. FTEC maior risco (-20% a -30%).<br><span style='color:#b4f048'><strong>Oportunidade (25%)</strong></span> Selic 11-12%, IBOV +15%: ganho <strong style='color:#b4f048'>+R$2.800 a +R$3.500</strong>. Portf&oacute;lio bem posicionado.</div><div style='margin-bottom:16px'><strong style='color:#fbbf24'>&#127919; 5. RECOMENDA&Ccedil;&Otilde;ES</strong><br><br>&#128308; <strong>ETF -9pp:</strong> aportar R$1.600-2.000 em IVVB11 (diversifica vs FTEC)<br>&#128308; <strong>FII +7,9pp:</strong> pausar compras de FII<br>&#128309; <strong>FIAGRO +4,2pp:</strong> n&atilde;o adicionar CRAA11/SNAG11<br>&#9888; FTEC 13,4%: maior risco concentrado em USD sem DY &mdash; revisar trimestralmente<br>&#9888; CRAA11+SNAG11 = R$1.643 na mesma tese agro &mdash; monitorar cr&eacute;dito rural<br><br><strong>Pr&oacute;ximo aporte R$500:</strong> 50% IVVB11 + 30% RDB NU + 20% BINC11<br><strong>Refor&ccedil;ar:</strong> IRIM11 (DY~12%) &bull; SNEL11 (DY~14%) &bull; IVVB11 (n&atilde;o est&aacute; na carteira)<br><strong>Monitorar:</strong> FTEC &mdash; reduzir se USD/BRL &gt;5,50 + Fed hawkish</div><div style='background:rgba(77,200,248,.06);border:1px solid rgba(77,200,248,.2);border-radius:8px;padding:14px 16px'><strong style='color:#4dc8f8'>&#128203; SUM&Aacute;RIO EXECUTIVO</strong><br><br>&bull; <strong>Base s&oacute;lida:</strong> 27 ativos, R$17.802, R$207 proventos (4 meses), DY ~11,2% a.a.<br><br>&bull; <strong>Desvio cr&iacute;tico:</strong> ETFs -9pp subalocados &mdash; prioridade absoluta; FIIs +7,9pp &mdash; pausa estrat&eacute;gica.<br><br>&bull; <strong>Risco FTEC:</strong> 13,4% growth/tech USD sem DY &mdash; diversificar com IVVB11.<br><br>&bull; <strong>&acirc;ncora robusta:</strong> RDB+CRAA11+BINC11 = R$3.249 (18,3%) em CDI+ &mdash; protetor eficiente.<br><br>&bull; <strong>Assimetria favor&aacute;vel:</strong> XPML11+TRXF11+HGRU11+FTEC se beneficiam no ciclo de cortes &mdash; portf&oacute;lio calibrado para capturar o upside.</div></div>"}];
 
 var DESCOBERTAS_CAT=[
@@ -2374,6 +2399,27 @@ var DESCOBERTAS_CAT=[
   {t:'SCHD',n:'Schwab Dividend Equity',type:'ETF',seg:'Dividendos US',ex:'NYSE'},
   {t:'IEF',n:'iShares 7-10yr Treasury',type:'ETF',seg:'Bonds US',ex:'NYSE'},
 ];
+
+
+async function fetchIDKAPre2a(){
+  // Tentar BCB SGS — IDKA PRÉ 2 Anos (série não oficial; usar IRFM-1 série 12466 como proxy)
+  var urls=[
+    'https://api.bcb.gov.br/dados/serie/bcdata.sgs.12466/dados/ultimos/1?formato=json',
+    'https://api.bcb.gov.br/dados/serie/bcdata.sgs.12457/dados/ultimos/1?formato=json',
+  ];
+  for(var i=0;i<urls.length;i++){
+    try{
+      var r=await fetch(urls[i],{signal:AbortSignal.timeout(8000)});
+      if(!r.ok)continue;
+      var j=await r.json();
+      if(j&&j.length){
+        var val=parseFloat((j[j.length-1].valor||'').replace(',','.'));
+        if(isFinite(val)&&val>0){idkaPre2a={price:val,source:'BCB SGS',ts:Date.now()};return idkaPre2a;}
+      }
+    }catch(e){}
+  }
+  return null;
+}
 
 // ── IA LOG ────────────────────────────────────────────────────
 function loadIaLog(){
@@ -2559,8 +2605,11 @@ function drawPerfChart(canvas,data,color,cdiAnnual){
   if(prices.length<2)return;
   var base=prices[0];
   var aRet=prices.map(function(p){return(p-base)/base*100;});
-  var cdiM=Math.pow(1+cdiAnnual/100,1/12)-1;
-  var cRet=aRet.map(function(_,i){return(Math.pow(1+cdiM,i+1)-1)*100;});
+  // Detectar frequência dos dados e calcular CDI na mesma escala
+  var nPts=prices.length;
+  var perYear=nPts<=14?12:nPts<=60?52:252; // mensal / semanal / diário
+  var cdiPerPeriod=Math.pow(1+cdiAnnual/100,1/perYear)-1;
+  var cRet=aRet.map(function(_,i){return(Math.pow(1+cdiPerPeriod,i+1)-1)*100;});
   var all=aRet.concat(cRet);
   var minV=Math.min.apply(null,all)-1;var maxV=Math.max.apply(null,all)+1;var range=maxV-minV||1;
   var xOf=function(i){return 10+(i/(prices.length-1))*(W-20);};
@@ -2773,24 +2822,24 @@ async function renderBsDescovertas(){
   });
   area.innerHTML=html;
   var brTickers=catalog.filter(function(d){return d.ex==='B3';}).map(function(d){return d.t;});
-  var batchSize=5;
-  for(var i=0;i<brTickers.length;i+=batchSize){
-    var batch=brTickers.slice(i,i+batchSize);
+  for(var bi=0;bi<brTickers.length;bi++){
+    var tk=brTickers[bi];
     var token=cfg.brapiKey?'?token='+cfg.brapiKey:'';
     try{
-      var resp=await fetch('https://brapi.dev/api/quote/'+batch.join(',')+token,{signal:AbortSignal.timeout(12000)});
-      if(!resp.ok)continue;
-      var j=await resp.json();
-      (j.results||[]).forEach(function(q){
-        var el=document.getElementById('desc-d-'+q.symbol);if(!el)return;
-        var price=q.regularMarketPrice||0;var chg=q.regularMarketChangePercent||0;
-        if(price>0)el.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600">R$ '+price.toFixed(2)+'</span><span class="'+(chg>=0?'up':'dn')+'" style="font-size:10px">'+(chg>=0?'+':'-')+Math.abs(chg).toFixed(2)+'%</span></div>';
-        else el.textContent='Indisponível';
-      });
-    }catch(e){}
-    if(i+batchSize<brTickers.length)await new Promise(function(res){setTimeout(res,500);});
+      var r2=await fetch('https://brapi.dev/api/quote/'+tk+token,{signal:AbortSignal.timeout(10000)});
+      if(r2.ok){
+        var j2=await r2.json();
+        var q2=j2&&j2.results&&j2.results[0];
+        if(q2){
+          var el2=document.getElementById('desc-d-'+tk);if(!el2)continue;
+          var p2=q2.regularMarketPrice||0;var c2=q2.regularMarketChangePercent||0;
+          el2.innerHTML=p2>0?'<div style="display:flex;justify-content:space-between"><span style="font-size:13px;font-weight:600">R$ '+p2.toFixed(2)+'</span><span class="'+(c2>=0?'up':'dn')+'" style="font-size:10px">'+(c2>=0?'+':'-')+Math.abs(c2).toFixed(2)+'%</span></div>':'<span style="color:var(--muted2)">—</span>';
+        }
+      }
+    }catch(e2){var el3=document.getElementById('desc-d-'+tk);if(el3)el3.textContent='—';}
+    if(bi<brTickers.length-1)await new Promise(function(r3){setTimeout(r3,400);});
   }
-  if(cfg.fhEnabled&&cfg.fhKey){
+    if(cfg.fhEnabled&&cfg.fhKey){
     var nyse=catalog.filter(function(d){return d.ex==='NYSE';});
     for(var ni=0;ni<nyse.length;ni++){
       try{
@@ -3937,9 +3986,7 @@ function toggleProtectManual(val){
   const dot=document.getElementById('dot-protect');
   const note=document.getElementById('protect-manual-note');
   if(dot)dot.style.background=val?'var(--amber)':'var(--muted)';
-  if(note)note.textContent=val
-    ?'Ativado · cotações manuais estão protegidas (↻ não vai sobrescrever)'
-    :'Desativado · cotações automáticas substituem valores manuais';
+  if(note)note.textContent=val?'Ativado · manuais protegidas (↻ não sobrescreve)':'Desativado · auto substitui manual';
   showToast(val?'Cotações manuais protegidas 🔒':'Cotações automáticas ativas 🔄','s');
 }
 function clearTickerManualQuotes(){
@@ -3949,6 +3996,27 @@ function clearTickerManualQuotes(){
   const tog=document.getElementById('tog-protect');if(tog)tog.checked=false;
   toggleProtectManual(false);
   showToast('Cotações manuais liberadas ✓','s');
+}
+
+
+function saveIDKA(){
+  var v=parseFloat(document.getElementById('idka-input')?.value);
+  if(!isFinite(v)||v<=0){showToast('Valor inválido','e');return;}
+  idkaPre2a={price:v,source:'Manual',ts:Date.now()};
+  var el=document.getElementById('bench-idka');if(el)el.textContent=v.toFixed(2)+'%';
+  var src=document.getElementById('idka-source');if(src)src.textContent='Manual · '+new Date().toLocaleTimeString('pt-BR');
+  // Incluir no tape
+  updateQuoteTape();
+  showToast('IDKA Pré 2A salvo ✓','s');
+}
+function updateIDKADisplay(){
+  if(!idkaPre2a)return;
+  var el=document.getElementById('bench-idka');
+  if(el)el.textContent=idkaPre2a.price.toFixed(2)+'%';
+  var inp=document.getElementById('idka-input');
+  if(inp)inp.placeholder=idkaPre2a.price.toFixed(2);
+  var src=document.getElementById('idka-source');
+  if(src)src.textContent=(idkaPre2a.source||'BCB')+' · '+new Date(idkaPre2a.ts).toLocaleTimeString('pt-BR');
 }
 
 function saveApiKeys(){cfg.anthropicKey=document.getElementById('anthropic-key')?.value||'';cfg.brapiKey=document.getElementById('brapi-key')?.value||'';cfg.avKey=document.getElementById('av-key')?.value||'';cfg.fhKey=document.getElementById('fh-key')?.value||'';saveCfg()}
@@ -3964,6 +4032,7 @@ function exportData(){
     dataSnapshot,
     bsTargets,
     iaLog:iaLog||[],
+    idkaPre2a:idkaPre2a||null,
     state,quotes,snaps,proventos,rfAssets,
     // cfg completo incluindo chaves (backup pessoal do usuário)
     cfg:{...cfg},
@@ -4079,6 +4148,7 @@ function importData(){
           bsTargets=data.bsTargets;saveTargets();
         }
         if(Array.isArray(data.iaLog)&&data.iaLog.length){iaLog=data.iaLog.slice(0,5);}
+        if(data.idkaPre2a&&data.idkaPre2a.price>0)idkaPre2a=data.idkaPre2a;
 
         // ── Config: importa TUDO incluindo chaves API ────────────
         // Prioridade: data.cfg (v2) → data['vela_cfg_v1'] → localStorage da v1
@@ -4343,19 +4413,25 @@ function buildTapeItems(){
 }
 
 function updateQuoteTape(){
-  const el=document.getElementById('qtape');if(!el)return;
+  var el=document.getElementById('qtape');if(!el)return;
   try{
-    const items=buildTapeItems();
-    if(!items.length)return;
-    const sep=`<div style=\"display:inline-flex;align-items:center;justify-content:center;width:56px;height:100%;flex-shrink:0\"><div style=\"width:1px;height:40%;background:rgba(255,255,255,.12)\"></div></div>`;
-    const withSep=items.map((it,i)=>i<items.length-1?it+sep:it).join('');
+    var items=buildTapeItems();if(!items.length)return;
+    var sep='<div style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:100%;flex-shrink:0"><div style="width:1px;height:40%;background:rgba(255,255,255,.12)"></div></div>';
+    var withSep=items.map(function(it,i){return i<items.length-1?it+sep:it;}).join('');
     el.innerHTML=withSep+sep+withSep;
-    // Ajustar velocidade após render
-    requestAnimationFrame(()=>{
-      const hw=el.offsetWidth/2||el.scrollWidth/2;
-      const dur=Math.max(20,Math.round(hw/80));
-      el.style.animationDuration=dur+'s';
-    });
+    el.style.animation='none';el.style.transform='translateX(0)';
+    if(window._tapeRaf){cancelAnimationFrame(window._tapeRaf);window._tapeRaf=null;}
+    window._tapePos=0;
+    setTimeout(function(){
+      window._tapeHalf=el.scrollWidth/2;
+      function step(){
+        window._tapePos+=0.35;
+        if(window._tapeHalf>0&&window._tapePos>=window._tapeHalf)window._tapePos-=window._tapeHalf;
+        el.style.transform='translateX(-'+window._tapePos.toFixed(1)+'px)';
+        window._tapeRaf=requestAnimationFrame(step);
+      }
+      step();
+    },150);
   }catch(e){console.warn('tape:',e);}
 }
 // ─────────────────────────────────────────────────────────────────
@@ -4386,7 +4462,7 @@ function syncSettings(){
   const ab=document.getElementById('about-build');if(ab)ab.textContent=APP_VER.build;
   const av=document.getElementById('about-ver');if(av)av.textContent='v'+APP_VER.version+'r'+String(APP_VER.release).padStart(2,'0');
   const ap=document.getElementById('about-product');if(ap)ap.textContent=APP_VER.product;
-  const rel=document.getElementById('about-release');if(rel)rel.textContent='r'+APP_VER.release+' · '+new Date(APP_VER.build).toLocaleDateString('pt-BR');
+  const rel=document.getElementById('about-release');if(rel)rel.textContent='r'+APP_VER.release+' · '+APP_VER.build;
   const snap=document.getElementById('about-snapshot');if(snap)snap.textContent=dataSnapshot?.label||'Aguardando atualização';
   const sbv=document.getElementById('sb-ttl');if(sbv)sbv.textContent='Cache: '+(cfg.ttl/60000<60?cfg.ttl/60000+' min':cfg.ttl/3600000+' hora(s)');
 }
