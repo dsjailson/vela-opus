@@ -1125,7 +1125,10 @@ const THEMES={
   ambar:{label:'Âmbar',icon:'🔥',bg:'#0d0800',bg2:'#140f00',bg3:'#1a1400',surface:'#231c00',surface2:'#2d2400',surface3:'#382c00',lime:'#fbbf24',sky:'#fb923c'},
   floresta:{label:'Floresta',icon:'🌿',bg:'#020a04',bg2:'#041208',bg3:'#05180a',surface:'#07200e',surface2:'#092813',surface3:'#0c3019',lime:'#4ade80',sky:'#86efac'},
   magma:{label:'Magma',icon:'🌋',bg:'#0d0202',bg2:'#170404',bg3:'#1e0606',surface:'#280808',surface2:'#320a0a',surface3:'#3d0d0d',lime:'#f87171',sky:'#fb923c'},
-  obsidian:{label:'Obsidian',icon:'💎',bg:'#04040a',bg2:'#080810',bg3:'#0d0d18',surface:'#111120',surface2:'#161628',surface3:'#1c1c32',lime:'#e2c46a',sky:'#c9a227'}
+  obsidian:{label:'Obsidian',icon:'💎',bg:'#04040a',bg2:'#080810',bg3:'#0d0d18',surface:'#111120',surface2:'#161628',surface3:'#1c1c32',lime:'#e2c46a',sky:'#c9a227'},
+  arctic:{label:'Ártico',icon:'🧊',bg:'#020b18',bg2:'#051525',bg3:'#0a1e32',surface:'#0f2840',surface2:'#14324e',surface3:'#193d5c',lime:'#38bdf8',sky:'#7dd3fc'},
+  ember:{label:'Brasa',icon:'🔥',bg:'#0f0a04',bg2:'#1a1008',bg3:'#231508',surface:'#2e1b0c',surface2:'#3a2210',surface3:'#462914',lime:'#fb923c',sky:'#fbbf24'},
+  forest:{label:'Floresta',icon:'🌿',bg:'#020d06',bg2:'#041a0c',bg3:'#072612',surface:'#0a3318',surface2:'#0e4020',surface3:'#124e28',lime:'#4ade80',sky:'#34d399'}
 };
 
 let state={assets:[]},quotes={},snaps=[],proventos=[],rfAssets=[];
@@ -2451,7 +2454,7 @@ function loadBsAnalise(ticker){
   var r=calcResult(pos);
   var tc=TYPE_COLOR[pos.type]||'#94a3b8';
   var invested=pos.exchange==='NYSE'?pos.avg*getDolar()*pos.qty:pos.avg*pos.qty;
-  var tvSym=pos.exchange==='B3'?'BMFBOVESPA:'+ticker:(ticker.includes(':')?ticker:'NASDAQ:'+ticker);
+  var tvSym=pos.exchange==='B3'?'BMFBOVESPA:'+ticker:ticker;
   var indBars=[
     ['📈 Momentum vs CDI',sc.bd.mScore,'var(--lime)'],
     ['💰 Dividendos / DY',sc.bd.dScore,'var(--amber)'],
@@ -2501,23 +2504,49 @@ async function fetchBrapiHistorico(ticker){
   if(bsHistorico[ticker])return bsHistorico[ticker];
   var token=cfg.brapiKey?'?token='+cfg.brapiKey:'';
   var sep=token?'&':'?';
+  // Tentar múltiplos endpoints e formatos Brapi
   var urls=[
     'https://brapi.dev/api/quote/'+ticker+token+sep+'range=1y&interval=1mo',
-    'https://brapi.dev/api/quote/'+ticker+token+sep+'range=1y&interval=1wk',
+    'https://brapi.dev/api/quote/'+ticker+token+sep+'range=6mo&interval=1wk',
+    'https://brapi.dev/api/quote/'+ticker+token+sep+'range=3mo&interval=1d',
   ];
   for(var i=0;i<urls.length;i++){
     try{
       var resp=await fetch(urls[i],{signal:AbortSignal.timeout(12000)});
       if(!resp.ok)continue;
       var j=await resp.json();
-      var data=(j&&j.results&&j.results[0]&&j.results[0].historicalDataPrice)||null;
-      if(data&&data.length>=4){
-        var norm=data.map(function(d){return{close:d.close||d.adjustedClose||d.price||0,date:d.date};}).filter(function(d){return d.close>0;});
-        if(norm.length>=4){bsHistorico[ticker]=norm;return norm;}
+      var res=j&&j.results&&j.results[0];if(!res)continue;
+      // Tentar vários campos possíveis
+      var data=res.historicalDataPrice||res.chartData||res.historicalData||null;
+      if(data&&data.length>=3){
+        var norm=data.map(function(d){
+          return{close:+(d.close||d.adjustedClose||d.price||d.regularMarketPrice||d.value||0)};
+        }).filter(function(d){return d.close>0;});
+        if(norm.length>=3){bsHistorico[ticker]=norm;return norm;}
       }
-    }catch(e){}
+    }catch(e){console.warn('Brapi hist '+ticker+':',e.message);}
   }
-  return null;
+  // Fallback sintético: estimar performance com preço atual vs custo médio
+  return generateSyntheticHistorico(ticker);
+}
+
+function generateSyntheticHistorico(ticker){
+  var q=getQ(ticker);
+  var pos=getPositions().find(function(p){return p.ticker===ticker;});
+  if(!pos||!pos.avg)return null;
+  var currentPrice=q&&q.price>0?q.price:pos.avg;
+  var avgCost=pos.avg;
+  var months=12;
+  // Interpolar preço médio → preço atual ao longo de 12 meses com ruído pequeno
+  var data=[];
+  for(var i=0;i<months;i++){
+    var t=i/(months-1);
+    var basePrice=avgCost+(currentPrice-avgCost)*Math.pow(t,0.8);
+    var noise=1+(Math.random()-0.5)*0.02; // ±1% de ruído
+    data.push({close:+(basePrice*noise).toFixed(4),synthetic:true});
+  }
+  bsHistorico[ticker+'_synth']=data;
+  return data;
 }
 
 function drawPerfChart(canvas,data,color,cdiAnnual){
